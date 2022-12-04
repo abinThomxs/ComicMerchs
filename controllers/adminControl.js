@@ -185,6 +185,7 @@ const postAddProduct = async (req, res) => {
       productCategory: req.body.productCategory,
       stock: req.body.stock,
       cost: req.body.cost,
+      soldCount: req.body.soldCount,
     });
     const productsData = await products.save();
     if (productsData) {
@@ -223,7 +224,7 @@ const postEditProduct = async (req, res) => {
       stock: req.body.stock,
       cost: req.body.cost,
       isFeatured: req.body.isFeatured,
-      image: req.body.image,
+      soldCount: req.body.soldCount,
     });
     if (productsData) {
       res.redirect('/admin/products');

@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 const Users = require('../models/signupModel');
+const Categories = require('../models/categories');
+const Products = require('../models/products');
 
 let message = '';
 
@@ -39,16 +41,18 @@ const loginPost = async (req, res) => {
   }
 };
 
-const userHomeRender = (req, res) => {
+const userHomeRender = async (req, res) => {
   const { session } = req;
+  const categories = await Categories.find();
+  const products = await Products.find();
   console.log(session.userid);
   if (session.userid && session.accountType === 'user') {
     console.log(session.userid);
     const customer = true;
-    res.render('user/userHome', { customer });
+    res.render('user/userHome', { customer, categories, products });
   } else {
     const customer = false;
-    res.render('user/userHome', { customer });
+    res.render('user/userHome', { customer, categories, products });
   }
 };
 

@@ -27,6 +27,10 @@ const products = new Schema({
     type: Boolean,
     default: false,
   },
+  soldCount: {
+    type: Number,
+    required: true,
+  },
   dateCreated: {
     type: Date,
     default: Date.now,
