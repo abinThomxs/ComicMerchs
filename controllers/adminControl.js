@@ -101,7 +101,7 @@ const postAddCategory = async (req, res) => {
     console.log(req.body);
     const categories = new Categories({
       name: req.body.name,
-      icon: req.body.icon,
+      description: req.body.description,
     });
     const categoriesData = await categories.save();
     if (categoriesData) {
@@ -132,7 +132,7 @@ const postEditCategory = async (req, res) => {
     console.log(req.params.id);
     const categoriesData = await Categories.updateOne({ _id: id }, {
       name: req.body.name,
-      icon: req.body.icon,
+      description: req.body.description,
     });
     if (categoriesData) {
       res.redirect('/admin/adminCategory');
@@ -235,6 +235,26 @@ const postEditProduct = async (req, res) => {
   }
 };
 
+const isFeatured = async (req, res) => {
+  try {
+    await Products.updateOne({ _id: req.params.id }, { $set: { isFeatured: true } }).then(() => {
+      res.redirect('/admin/products');
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+const notFeatured = async (req, res) => {
+  try {
+    await Products.updateOne({ _id: req.params.id }, { $set: { isFeatured: false } }).then(() => {
+      res.redirect('/admin/products');
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
 const getDeleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -265,6 +285,8 @@ module.exports = {
   postAddProduct,
   getEditProduct,
   postEditProduct,
+  isFeatured,
+  notFeatured,
   getDeleteProduct,
   logout,
 };
