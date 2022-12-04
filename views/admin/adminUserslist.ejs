@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('../partials/adminHeader.ejs') %>
+
+    <body>
+
+        <%- include('../partials/adminHomeNav.ejs') %> 
+
+        <div class="container col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <table id="tableForm" class="table">
+                <thead>
+                    <tr>
+
+                        <th scope="col">First Name</th>
+                        <th scope="col">Last Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">Gender</th>
+                        <th scope="col">Edit</th>
+                        <th scope="col">Block/Unblock</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach( usersData=> { %>
+                        <tr>
+                            <td>
+                                <%= usersData.firstName %>
+                            </td>
+                            <td>
+                                <%= usersData.lastName %>
+                            </td>
+                            <td>
+                                <%= usersData.email %>
+                            </td>
+                            <td>
+                                <%= usersData.phone %>
+                            </td>
+                            <td>
+                                <%= usersData.gender %>
+                            </td>
+                            <td><a href="/edituser?email=<%= usersData.email %>" class="btn btn-secondary">Edit</a>
+                            </td>
+                            <% if (usersData.isBlock===false) { %>
+                                <td><a href="/admin/blockuser/<%= usersData._id %>" class=" btn btn-danger"
+                                        onclick="return confirm('CLICK OK TO BLOCK')">Block</a></td>
+                            <% } else { %>
+                                <td><a href="/admin/unblockuser/<%= usersData._id %>" class=" btn btn-danger"
+                                        onclick="return confirm('CLICK OK TO UNBLOCK')">Unblock</a></td>
+                                <% } %>
+
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+            <table>
+                <tbody>
+                    <td><a href="/admin/adduser" class="btn btn-success">Add User</a></td>
+                    <td><a href="/admin/logout" class="btn btn-primary">Logout</a></td>
+                </tbody>
+            </table>
+
+            <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+            <script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+            <script type="text/javascript"
+                src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+
+            <script>
+                $(document).ready(function () {
+                    $('#tableForm').DataTable();
+                });
+            </script>
+
+            <!-- Section: Design Block -->
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+                integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+                crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js"
+                integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk"
+                crossorigin="anonymous"></script>
+
+        </div>
+           
+
+    </body>
+
+</html>
