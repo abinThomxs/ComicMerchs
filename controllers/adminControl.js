@@ -182,10 +182,13 @@ const postAddProduct = async (req, res) => {
     console.log(req.body);
     const products = new Products({
       productName: req.body.productName,
+      description: req.body.description,
       productCategory: req.body.productCategory,
       stock: req.body.stock,
       cost: req.body.cost,
       soldCount: req.body.soldCount,
+      image: req.body.image,
+      discount: req.body.discount,
     });
     const productsData = await products.save();
     if (productsData) {
@@ -220,37 +223,19 @@ const postEditProduct = async (req, res) => {
     console.log(req.params.id);
     const productsData = await Products.updateOne({ _id: id }, {
       productName: req.body.productName,
+      description: req.body.description,
       productCategory: req.body.productCategory,
       stock: req.body.stock,
       cost: req.body.cost,
-      isFeatured: req.body.isFeatured,
+      image: req.body.image,
       soldCount: req.body.soldCount,
+      discount: req.body.discount,
     });
     if (productsData) {
       res.redirect('/admin/products');
     } else {
       res.render('admin/editProduct');
     }
-  } catch (error) {
-    console.log(error.message);
-  }
-};
-
-const isFeatured = async (req, res) => {
-  try {
-    await Products.updateOne({ _id: req.params.id }, { $set: { isFeatured: true } }).then(() => {
-      res.redirect('/admin/products');
-    });
-  } catch (error) {
-    console.log(error.message);
-  }
-};
-
-const notFeatured = async (req, res) => {
-  try {
-    await Products.updateOne({ _id: req.params.id }, { $set: { isFeatured: false } }).then(() => {
-      res.redirect('/admin/products');
-    });
   } catch (error) {
     console.log(error.message);
   }
@@ -286,8 +271,6 @@ module.exports = {
   postAddProduct,
   getEditProduct,
   postEditProduct,
-  isFeatured,
-  notFeatured,
   getDeleteProduct,
   logout,
 };

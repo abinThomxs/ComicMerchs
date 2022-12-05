@@ -16,8 +16,6 @@ router.route('/editCategory/:id').get(controller.getEditCategory).post(controlle
 router.get('/products', controller.getAdminProducts);
 router.route('/addProduct').get(controller.getAddProduct).post(controller.postAddProduct);
 router.route('/editProduct/:id').get(controller.getEditProduct).post(controller.postEditProduct);
-router.get('/isFeatured/:id', controller.isFeatured);
-router.get('/notFeatured/:id', controller.notFeatured);
 router.get('/deleteProduct/:id', controller.getDeleteProduct);
 
 module.exports = router;

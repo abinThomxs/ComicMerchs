@@ -103,6 +103,26 @@ const signupPost = (req, res) => {
   });
 };
 
+const getProductDetail = async (req, res) => {
+  try {
+    const { session } = req;
+    const { id } = req.params;
+    console.log(id);
+    const products = await Products.findOne({ _id: id });
+    console.log(products);
+    if (session.userid && session.accountType === 'user') {
+      console.log(session.userid);
+      const customer = true;
+      res.render('user/productDetail', { customer, products });
+    } else {
+      const customer = false;
+      res.render('user/productDetail', { customer, products });
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
 module.exports = {
   loginRender,
   loginPost,
@@ -110,4 +130,5 @@ module.exports = {
   userHomeRender,
   signupPost,
   signupRender,
+  getProductDetail,
 };

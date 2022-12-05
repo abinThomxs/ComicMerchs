@@ -8,6 +8,10 @@ const products = new Schema({
     type: String,
     required: true,
   },
+  description: {
+    type: String,
+    required: true,
+  },
   productCategory: {
     type: String,
     ref: 'categories',
@@ -23,13 +27,17 @@ const products = new Schema({
     type: String,
     required: true,
   },
-  isFeatured: {
-    type: Boolean,
-    default: false,
+  image: {
+    type: String,
+    required: true,
   },
   soldCount: {
     type: Number,
     required: true,
+  },
+  discount: {
+    type: Boolean,
+    default: false,
   },
   dateCreated: {
     type: Date,

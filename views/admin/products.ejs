@@ -16,7 +16,6 @@
                             <th scope="col">Category</th>
                             <th scope="col">Stock</th>
                             <th scope="col">Cost</th>
-                            <th scope="col">featured?</th>
                             <th scope="col">Date Created</th>
                             <th scope="col">Sold Count</th>                            
                             <th scope="col">Edit</th>
@@ -39,13 +38,7 @@
                                 <td>
                                     <%= productsData.cost %>
                                 </td>
-                                <% if (productsData.isFeatured===false) { %>
-                                    <td><a href="/admin/isFeatured/<%= productsData._id %>" class=" btn btn-secondary"
-                                            onclick="return confirm('Click OK to Feature the product')">Feature</a></td>
-                                <% } else { %>
-                                    <td><a href="/admin/notFeatured/<%= productsData._id %>" class=" btn btn-secondary"
-                                            onclick="return confirm('Click OK not to Feature the product')">Don't Feature</a></td>
-                                    <% } %>
+                               
                                 <td>
                                     <%= productsData.dateCreated %>
                                 </td>

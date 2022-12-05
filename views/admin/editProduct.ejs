@@ -32,6 +32,15 @@
                                             </div>
                                             <div class="col-md-6 mb-4">
                                                 <div class="form-outline">
+                                                    <input value="<%= productsData.description %>" type="text" id="form3Example1" name="description"
+                                                        class="form-control" />
+
+                                                    <label class="form-label" for="form3Example1">Description</label><br>
+                                                    <span id="descriptionError" style="color: red;"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-4">
+                                                <div class="form-outline">
                                                     <input value="<%= productsData.productCategory %>" type="text" id="form3Example2" name="productCategory"
                                                         class="form-control" />
                                                     <label class="form-label" for="form3Example2">Category</label><br>
@@ -56,6 +65,14 @@
                                             </div>
                                             <div class="col-md-6 mb-4">
                                                 <div class="form-outline">
+                                                    <input value="<%= productsData.image %>" type="string" id="form3Example4" name="image"
+                                                        class="form-control" />
+                                                    <label class="form-label" for="form3Example4">Image address</label><br>
+                                                    <span id="imageError" style="color: red;"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-4">
+                                                <div class="form-outline">
                                                     <input value="<%= productsData.soldCount %>" type="number" id="form3Example5" name="soldCount"
                                                         class="form-control" />
                                                     <label class="form-label" for="form3Example5">Sold Count</label><br>
@@ -64,12 +81,16 @@
                                             </div>
                                             <div class="col-md-6 mb-4">
                                                 <div class="form-outline">
-                                                    <input value="<%= productsData.isFeatured %>" type="text" id="form3Example6" name="isFeatured"
-                                                        class="form-control" />
-                                                    <label class="form-label" for="form3Example6">Featured?</label><br>
-                                                    <span id="isfeaturedError" style="color: red;"></span>
+                                                    <select class="form-select" type="text" id="form3Example5" name="discount" aria-label="Default select example">
+                                                        <option selected>Choose</option>
+                                                        <option value="true">True</option>
+                                                        <option value="false">False</option>                                                        
+                                                      </select>
+                                                    <label class="form-label" for="form3Example4">Discount</label><br>
+                                                    <span id="soldcountError" style="color: red;"></span>
                                                 </div>
                                             </div>
+                                            
                                         </div>
 
                                         
