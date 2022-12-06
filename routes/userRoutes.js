@@ -10,5 +10,7 @@ router.get('/signup', controller.signupRender);
 router.post('/signup', controller.signupPost);
 router.get('/home', controller.userHomeRender);
 router.get('/productDetail/:id', controller.getProductDetail);
+router.get('/cart', controller.getCart);
+router.get('/addToCart/:id', controller.getAddToCart);
 
 module.exports = router;

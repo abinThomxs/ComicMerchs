@@ -1,7 +1,11 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable object-curly-newline */
 /* eslint-disable no-console */
+const mongoose = require('mongoose');
 const Users = require('../models/signupModel');
 const Categories = require('../models/categories');
 const Products = require('../models/products');
+const Carts = require('../models/carts');
 
 let message = '';
 
@@ -43,16 +47,25 @@ const loginPost = async (req, res) => {
 
 const userHomeRender = async (req, res) => {
   const { session } = req;
+  let count = 0;
   const categories = await Categories.find();
+  const userData = await Users.findOne({ email: session.userid });
+  console.log(userData._id);
   const products = await Products.find();
+  const cart = await Carts.find({ userId: userData._id });
+  if (cart.length) {
+    count = cart[0].product.length;
+  } else {
+    count = 0;
+  }
   console.log(session.userid);
   if (session.userid && session.accountType === 'user') {
     console.log(session.userid);
     const customer = true;
-    res.render('user/userHome', { customer, categories, products });
+    res.render('user/userHome', { customer, categories, products, count });
   } else {
     const customer = false;
-    res.render('user/userHome', { customer, categories, products });
+    res.render('user/userHome', { customer, categories, products, count });
   }
 };
 
@@ -107,19 +120,107 @@ const getProductDetail = async (req, res) => {
   try {
     const { session } = req;
     const { id } = req.params;
-    console.log(id);
+    let count = 0;
+    const userData = await Users.findOne({ email: session.userid });
     const products = await Products.findOne({ _id: id });
-    console.log(products);
+    const cart = await Carts.find({ userId: userData._id });
     if (session.userid && session.accountType === 'user') {
       console.log(session.userid);
       const customer = true;
-      res.render('user/productDetail', { customer, products });
+      if (cart.length) {
+        count = cart[0].product.length;
+      } else {
+        count = 0;
+      }
+      res.render('user/productDetail', { customer, products, count, session });
     } else {
       const customer = false;
-      res.render('user/productDetail', { customer, products });
+      res.render('user/productDetail', { customer, products, count, session });
     }
   } catch (error) {
     console.log(error.message);
+  }
+};
+const getCart = async (req, res) => {
+  try {
+    const { session } = req;
+    const { id } = req.params;
+    let count = 0;
+    const userData = await Users.findOne({ email: session.userid });
+    const cart = await Carts.find({ userId: userData._id });
+    const carts = await Carts.findOne({ _id: id });
+    console.log(carts);
+    if (session.userid && session.accountType === 'user') {
+      console.log(session.userid);
+      if (cart.length) {
+        count = cart[0].product.length;
+      } else {
+        count = 0;
+      }
+      const customer = true;
+      res.render('user/cart', { customer, carts, count });
+    } else {
+      res.redirect('/user/home');
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+const getAddToCart = async (req, res) => {
+  const { id } = req.params;
+  const products = await Products.findOne({ _id: id });
+  const objectId = mongoose.Types.ObjectId(id);
+  console.log(objectId);
+  const userId = req.session.userid;
+  const proObj = {
+    productId: objectId,
+    quantity: 1,
+  };
+  if (products.stock >= 1) {
+    const userData = await Users.findOne({ email: userId });
+    const userCart = await Carts.findOne({ userId: userData.email });
+    if (userCart) {
+      const proExist = userCart.product.findIndex(
+        (product) => product.productId === id,
+      );
+      if (proExist !== -1) {
+        await Carts.aggregate([
+          {
+            $unwind: '$product',
+          },
+        ]);
+        await Carts.updateOne(
+          // eslint-disable-next-line no-underscore-dangle
+          { userId: userData._id, 'product.productId': objectId },
+          { $inc: { 'product.$.quantity': 1 } },
+        );
+        res.redirect('/userhome');
+      } else {
+        Carts
+          // eslint-disable-next-line no-underscore-dangle
+          .updateOne({ userId: userData._id }, { $push: { product: proObj } })
+          .then(() => {
+            res.json({ status: true });
+          });
+      }
+    } else {
+      const newCart = new Carts({
+        // eslint-disable-next-line no-underscore-dangle
+        userId: userData._id,
+        product: [
+          {
+            productId: objectId,
+            quantity: 1,
+          },
+        ],
+      });
+      newCart.save().then(() => {
+        res.json({ status: true });
+      });
+    }
+  } else {
+    res.json({ status: false });
   }
 };
 
@@ -131,4 +232,6 @@ module.exports = {
   signupPost,
   signupRender,
   getProductDetail,
+  getCart,
+  getAddToCart,
 };

@@ -55,7 +55,7 @@
 }
 
 .signupBox {
-    background:  rgba(217, 217, 217, 0) 100%;
+    background: rgba(217, 217, 217, 0) 100%;
     width: 100%;
     margin-top: 80px;
 }
@@ -187,7 +187,7 @@ h1.heading {
     box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
     transition: box-shadow .25s;
 }
- 
+
 #card {
     height: fit-content;
     align-self: center;
@@ -279,3 +279,6 @@ h1.heading {
     color: #fff;
 }
 
+#badge {
+    background-color: #0e5884;
+}
