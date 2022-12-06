@@ -34,9 +34,9 @@
                                                         <div class="card-body p-0">
                                                             <div class="row g-0 ">
                                                                 <div class="col-lg-8">
-                                                                    <div class="p-5">
+                                                                    <div class="p-5 border">
                                                                         <div
-                                                                            class="d-flex justify-content-between align-items-center mb-5">
+                                                                            class="d-flex justify-content-between align-items-center mb-5 ">
                                                                             <h1 class="fw-bold mb-0 text-black">Shopping
                                                                                 Cart</h1>
                                                                         </div>
@@ -45,15 +45,15 @@
                                                                             <div
                                                                                 class="row mb-4 d-flex justify-content-between align-items-center">
                                                                                 <div class="col-md-2 col-lg-2 col-xl-2">
-                                                                                    <img src="/admin/products/<%= cartData.productDetail._id %>.jpg"
+                                                                                    <img src="<%= cartData.productDetail.image %> "
                                                                                         class="img-fluid rounded-3"
-                                                                                        alt="Cotton T-shirt" />
+                                                                                        alt="" />
                                                                                 </div>
                                                                                 <div
                                                                                     class="col-md-3 col-lg-3 col-xl-3 my-2">
                                                                                     <h6 class="text-black mb-0">
-                                                                                        <%= cartData.productDetail.product
-                                                                                            %>
+                                                                                        <%=
+                                                                                            cartData.productDetail.productName%>
                                                                                     </h6>
                                                                                 </div>
                                                                                 <div
@@ -77,9 +77,8 @@
                                                                                 <div
                                                                                     class="col-md-3 col-lg-2 col-xl-2 offset-lg-1 d-flex justify-content-center my-2">
                                                                                     <h6 class="mb-0">
-                                                                                        Rs. <%=
-                                                                                            cartData.productDetail.price
-                                                                                            %>
+                                                                                        Rs.
+                                                                                        <%=cartData.productDetail.cost%>
                                                                                     </h6>
                                                                                 </div>
                                                                                 <div
@@ -111,46 +110,39 @@
                                                                                 </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-lg-4 bg-grey">
+                                                                <div class="col-lg-4 bg-secondary text-light border border-secondary">
                                                                     <div class="p-5">
                                                                         <% if(cart.length!==0){ %>
                                                                             <h3 class="fw-bold mb-5 mt-2 pt-1">Summary
                                                                             </h3>
                                                                             <hr class="my-4" />
-                                                                            <% cart.forEach((product)=>{ %>
+                                                                            <% cart.forEach((cartData)=>{ %>
                                                                                 <div
                                                                                     class="d-flex justify-content-between mb-4">
                                                                                     <p>
-                                                                                        <%= cartData.productDetail.product
-                                                                                            %>
+                                                                                        <%= cartData.productDetail.productName%>
                                                                                     </p>
                                                                                     <p id="price">Rs.<%=
                                                                                             cartData.productPrice %>
                                                                                     </p>
                                                                                 </div>
-                                                                                <% }) %>
-                                                                                    <!-- <h5 class="text-uppercase mb-3">Shipping</h5> -->
-                                                                                    <!-- <div class="mb-4 pb-2">
-                                              <select class="select">
-                                                <option value="1">Standard-Delivery- €5.00</option>
-                                                <option value="2">Two</option>
-                                                <option value="3">Three</option>
-                                                <option value="4">Four</option>
-                                              </select>
-                                            </div>
-                                            <h5 class="text-uppercase mb-3">Give code</h5>
-                                            <div class="mb-5">
-                                              <div class="form-outline">
-                                                <input
-                                                  type="text"
-                                                  id="form3Examplea2"
-                                                  class="form-control form-control-lg"
-                                                />
-                                                <label class="form-label" for="form3Examplea2"
-                                                  >Enter your code</label
-                                                >
-                                              </div>
-                                            </div> -->
+                                                                            <% }) %>
+                                                                            <!-- <h5 class="text-uppercase mb-3">Shipping</h5> -->
+                                                                            <!-- <div class="mb-4 pb-2">
+                                                                                    <select class="select">
+                                                                                        <option value="1">Standard-Delivery- €5.00</option>
+                                                                                        <option value="2">Two</option>
+                                                                                        <option value="3">Three</option>
+                                                                                        <option value="4">Four</option>
+                                                                                    </select>
+                                                                                </div>
+                                                                                    <h5 class="text-uppercase mb-3">Give code</h5>
+                                                                                    <div class="mb-5">
+                                                                                        <div class="form-outline">
+                                                                                            <input type="text" id="form3Examplea2" class="form-control form-control-lg"/>
+                                                                                        <label class="form-label" for="form3Examplea2">Enter your code</label>
+                                                                                    </div>
+                                                                                </div> -->
 
                                                                                     <hr class="my-4" />
                                                                                     <div

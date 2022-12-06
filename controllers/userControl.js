@@ -48,16 +48,12 @@ const loginPost = async (req, res) => {
 
 const userHomeRender = async (req, res) => {
   const { session } = req;
-  let count = 0;
   const categories = await Categories.find();
-  const userData = session.userid;
+  const userData = await Users.findOne({ _id: session.userid });
   const products = await Products.find();
   const cart = await Carts.find({ userId: userData._id });
-  if (cart.length) {
-    count = cart[0].product.length;
-  } else {
-    count = 0;
-  }
+  const count = cart[0].product.length;
+  console.log(count);
   console.log(session.userid);
   if (session.userid && session.accountType === 'user') {
     console.log(session.userid);
@@ -169,11 +165,11 @@ const getProductDetail = async (req, res) => {
 
 const getCart = async (req, res) => {
   const { session } = req;
-  const userData = session.userid;
+  const userData = mongoose.Types.ObjectId(session.userid);
   const customer = true;
   const cart = await Carts.aggregate([
     {
-      $match: { _id: userData },
+      $match: { userId: userData },
     },
     {
       $unwind: '$product',
@@ -207,8 +203,11 @@ const getCart = async (req, res) => {
       },
     },
   ]);
+
   const sum = cart.reduce((accumulator, object) => accumulator + object.productPrice, 0);
+  console.log(cart);
   const count = cart.length;
+  console.log(count);
   res.render('user/cart', { session, customer, cart, count, sum });
 };
 

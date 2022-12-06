@@ -6,7 +6,7 @@ const { ObjectId } = Schema;
 const cartSchema = new Schema(
   {
     userId: {
-      type: String,
+      type: ObjectId,
       required: true,
     },
     product: [
