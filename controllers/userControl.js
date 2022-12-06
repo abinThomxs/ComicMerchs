@@ -25,7 +25,8 @@ const loginPost = async (req, res) => {
               console.log(result.password);
               const { session } = req;
               session.accountType = 'user';
-              session.userid = result.email;
+              console.log(result._id);
+              session.userid = result._id;
               res.redirect('/user/home');
             } else {
               message = 'wrong password';
@@ -49,8 +50,7 @@ const userHomeRender = async (req, res) => {
   const { session } = req;
   let count = 0;
   const categories = await Categories.find();
-  const userData = await Users.findOne({ email: session.userid });
-  console.log(userData._id);
+  const userData = session.userid;
   const products = await Products.find();
   const cart = await Carts.find({ userId: userData._id });
   if (cart.length) {
@@ -121,7 +121,7 @@ const getProductDetail = async (req, res) => {
     const { session } = req;
     const { id } = req.params;
     let count = 0;
-    const userData = await Users.findOne({ email: session.userid });
+    const userData = await Users.findOne({ _id: session.userid });
     const products = await Products.findOne({ _id: id });
     const cart = await Carts.find({ userId: userData._id });
     if (session.userid && session.accountType === 'user') {
@@ -141,34 +141,80 @@ const getProductDetail = async (req, res) => {
     console.log(error.message);
   }
 };
+// const getCart = async (req, res) => {
+//   try {
+//     const { session } = req;
+//     const { id } = req.params;
+//     let count = 0;
+//     const userData = await Users.findOne({ email: session.userid });
+//     const cart = await Carts.find({ userId: userData._id });
+//     const carts = await Carts.findOne({ _id: id });
+//     console.log(carts);
+//     if (session.userid && session.accountType === 'user') {
+//       console.log(session.userid);
+//       if (cart.length) {
+//         count = cart[0].product.length;
+//       } else {
+//         count = 0;
+//       }
+//       const customer = true;
+//       res.render('user/cart', { customer, carts, count });
+//     } else {
+//       res.redirect('/user/home');
+//     }
+//   } catch (error) {
+//     console.log(error.message);
+//   }
+// };
+
 const getCart = async (req, res) => {
-  try {
-    const { session } = req;
-    const { id } = req.params;
-    let count = 0;
-    const userData = await Users.findOne({ email: session.userid });
-    const cart = await Carts.find({ userId: userData._id });
-    const carts = await Carts.findOne({ _id: id });
-    console.log(carts);
-    if (session.userid && session.accountType === 'user') {
-      console.log(session.userid);
-      if (cart.length) {
-        count = cart[0].product.length;
-      } else {
-        count = 0;
-      }
-      const customer = true;
-      res.render('user/cart', { customer, carts, count });
-    } else {
-      res.redirect('/user/home');
-    }
-  } catch (error) {
-    console.log(error.message);
-  }
+  const { session } = req;
+  const userData = session.userid;
+  const customer = true;
+  const cart = await Carts.aggregate([
+    {
+      $match: { _id: userData },
+    },
+    {
+      $unwind: '$product',
+    },
+    {
+      $project: {
+        productItem: '$product.productId',
+        productQuantity: '$product.quantity',
+      },
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productItem',
+        foreignField: '_id',
+        as: 'productDetail',
+      },
+    },
+    {
+      $project: {
+        productItem: 1,
+        productQuantity: 1,
+        productDetail: { $arrayElemAt: ['$productDetail', 0] },
+      },
+    },
+    {
+      $addFields: {
+        productPrice: {
+          $sum: { $multiply: ['$productQuantity', '$productDetail.cost'] },
+        },
+      },
+    },
+  ]);
+  const sum = cart.reduce((accumulator, object) => accumulator + object.productPrice, 0);
+  const count = cart.length;
+  res.render('user/cart', { session, customer, cart, count, sum });
 };
 
 const getAddToCart = async (req, res) => {
   const { id } = req.params;
+  console.log(id);
   const products = await Products.findOne({ _id: id });
   const objectId = mongoose.Types.ObjectId(id);
   console.log(objectId);
@@ -178,8 +224,8 @@ const getAddToCart = async (req, res) => {
     quantity: 1,
   };
   if (products.stock >= 1) {
-    const userData = await Users.findOne({ email: userId });
-    const userCart = await Carts.findOne({ userId: userData.email });
+    const userData = await Users.findOne({ _id: userId });
+    const userCart = await Carts.findOne({ userId: userData._id });
     if (userCart) {
       const proExist = userCart.product.findIndex(
         (product) => product.productId === id,
