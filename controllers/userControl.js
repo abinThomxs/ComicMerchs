@@ -1,3 +1,5 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable prefer-destructuring */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable object-curly-newline */
 /* eslint-disable no-console */
@@ -48,14 +50,17 @@ const loginPost = async (req, res) => {
 
 const userHomeRender = async (req, res) => {
   const { session } = req;
+  let count = 0;
   const categories = await Categories.find();
-  const userData = await Users.findOne({ _id: session.userid });
   const products = await Products.find();
-  const cart = await Carts.find({ userId: userData._id });
-  const count = cart[0].product.length;
-  console.log(count);
-  console.log(session.userid);
   if (session.userid && session.accountType === 'user') {
+    console.log(session.userid);
+    const userData = await Users.findOne({ _id: session.userid });
+    const cart = await Carts.find({ userId: userData._id });
+    if (cart.length) {
+      count = cart[0].product.length;
+    }
+    console.log(count);
     console.log(session.userid);
     const customer = true;
     res.render('user/userHome', { customer, categories, products, count });
@@ -137,31 +142,6 @@ const getProductDetail = async (req, res) => {
     console.log(error.message);
   }
 };
-// const getCart = async (req, res) => {
-//   try {
-//     const { session } = req;
-//     const { id } = req.params;
-//     let count = 0;
-//     const userData = await Users.findOne({ email: session.userid });
-//     const cart = await Carts.find({ userId: userData._id });
-//     const carts = await Carts.findOne({ _id: id });
-//     console.log(carts);
-//     if (session.userid && session.accountType === 'user') {
-//       console.log(session.userid);
-//       if (cart.length) {
-//         count = cart[0].product.length;
-//       } else {
-//         count = 0;
-//       }
-//       const customer = true;
-//       res.render('user/cart', { customer, carts, count });
-//     } else {
-//       res.redirect('/user/home');
-//     }
-//   } catch (error) {
-//     console.log(error.message);
-//   }
-// };
 
 const getCart = async (req, res) => {
   const { session } = req;
@@ -205,30 +185,29 @@ const getCart = async (req, res) => {
   ]);
 
   const sum = cart.reduce((accumulator, object) => accumulator + object.productPrice, 0);
-  console.log(cart);
   const count = cart.length;
   console.log(count);
   res.render('user/cart', { session, customer, cart, count, sum });
 };
 
 const getAddToCart = async (req, res) => {
-  const { id } = req.params;
-  console.log(id);
-  const products = await Products.findOne({ _id: id });
-  const objectId = mongoose.Types.ObjectId(id);
-  console.log(objectId);
+  const id = req.params.id;
   const userId = req.session.userid;
+  const products = await Products.findOne({ _id: id });
+  const userData = await Users.findOne({ _id: userId });
+  const objId = mongoose.Types.ObjectId(id);
+  console.log(userData);
+
+  // const idUser = mongoose.Types.ObjectId(userData._id);
   const proObj = {
-    productId: objectId,
+    productId: objId,
     quantity: 1,
   };
   if (products.stock >= 1) {
-    const userData = await Users.findOne({ _id: userId });
     const userCart = await Carts.findOne({ userId: userData._id });
     if (userCart) {
-      const proExist = userCart.product.findIndex(
-        (product) => product.productId === id,
-      );
+      const proExist = userCart.product.findIndex((product) => product.productId == id);
+      console.log(proExist);
       if (proExist !== -1) {
         await Carts.aggregate([
           {
@@ -236,14 +215,12 @@ const getAddToCart = async (req, res) => {
           },
         ]);
         await Carts.updateOne(
-          // eslint-disable-next-line no-underscore-dangle
-          { userId: userData._id, 'product.productId': objectId },
+          { userId: userData._id, 'product.productId': objId },
           { $inc: { 'product.$.quantity': 1 } },
         );
-        res.redirect('/userhome');
+        res.json({ productExist: true });
       } else {
         Carts
-          // eslint-disable-next-line no-underscore-dangle
           .updateOne({ userId: userData._id }, { $push: { product: proObj } })
           .then(() => {
             res.json({ status: true });
@@ -251,11 +228,10 @@ const getAddToCart = async (req, res) => {
       }
     } else {
       const newCart = new Carts({
-        // eslint-disable-next-line no-underscore-dangle
         userId: userData._id,
         product: [
           {
-            productId: objectId,
+            productId: objId,
             quantity: 1,
           },
         ],
@@ -265,7 +241,7 @@ const getAddToCart = async (req, res) => {
       });
     }
   } else {
-    res.json({ status: false });
+    res.json({ stock: true });
   }
 };
 

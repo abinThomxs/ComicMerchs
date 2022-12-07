@@ -96,7 +96,7 @@
                                                                 <a href="http://localhost:3000/user/addToCart/<%= products._id %>"> <button id="cartButton" class="btn btn-outline-dark mt-auto" >Add to Cart</button></a>
                                                             <% }else{ %>
                                                             <div class="d-flex">
-                                                              <a href="/user"><button class="btn btn-outline-dark mt-auto" id="">Add to Cart</button></a>
+                                                              <a href="http://localhost:3000/user/login"><button class="btn btn-outline-dark mt-auto" id="addToCart">Add to Cart</button></a>
                                                               <p id="exist" class="text-danger"></p>
                                                             </div>
                                                             <% } %>
@@ -111,7 +111,16 @@
                                 </div>
                             </section>
 
-
+                            <script>
+                                
+                                const button = document.getElementById('cartButton');
+                          
+                                // Add a click event listener to the button
+                                button.addEventListener('click', () => {
+                                  // Change the button's inner HTML to "Clicked!"
+                                  button.innerHTML = 'Added to Cart';
+                                });
+                              </script>
 
 
 
