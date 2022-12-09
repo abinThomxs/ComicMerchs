@@ -57,23 +57,27 @@
                                                                                     </h6>
                                                                                 </div>
                                                                                 <div
-                                                                                    class="col-md-3 col-lg-3 col-xl-2 d-flex my-2">
+                                                                                    class="col-md-3 col-lg-3 col-xl-2 d-flex ">
+                                                                                    
                                                                                     <button id="buttonNegative"
-                                                                                        class="btn btn-link px-2"
-                                                                                        onclick="changeQuantity('<%= cartData._id %>','<%= cartData.productDetail._id %>',-1)">
-                                                                                        <i class="fas fa-minus"></i>
+                                                                                        class="btn btn-primary h-25 text-light px-2" <% if (cartData.productQuantity > 1) { %>
+                                                                                        onclick="changeQuantity('<%= cartData._id %>','<%= cartData.productDetail._id %>',-1) <% } %>">-
                                                                                     </button>
-                                                                                    <p
+                                                                                    
+
+                                                                                    <p class="px-3 fs-4"
                                                                                         id="<%= cartData.productDetail._id %>">
                                                                                         <%= cartData.productQuantity %>
                                                                                     </p>
-                                                                                    <button class="btn btn-link px-2"
-                                                                                        onclick="changeQuantity('<%= cartData._id %>','<%= cartData.productDetail._id %>',1)">
+
+                                                                                    
+                                                                                    <button 
+                                                                                        class="btn btn-primary h-25 text-light px-2" <% if (cartData.productQuantity < (cartData.productDetail.stock-cartData.productDetail.soldCount)) { %>
+                                                                                        onclick="changeQuantity('<%= cartData._id %>','<%= cartData.productDetail._id %>',1)" <% } %>>+
                                                                                         <i class="fas fa-plus"></i>
                                                                                     </button>
-                                                                                </div>
-
-
+                                                                                 </div>
+                                                                                 
                                                                                 <div
                                                                                     class="col-md-3 col-lg-2 col-xl-2 offset-lg-1 d-flex justify-content-center my-2">
                                                                                     <h6 class="mb-0">
@@ -83,18 +87,16 @@
                                                                                 </div>
                                                                                 <div
                                                                                     class="col-md-1 col-lg-1 col-xl-1 text-end d-flex justify-content-center my-2">
-                                                                                    <button class="btn btn-outline-none"
-                                                                                        onclick="removeProduct('<%= cartData._id %>','<%= cartData.productDetail._id %>')">
+                                                                                    <button class="btn btn-success"
+                                                                                        onclick="deleteProduct('<%= cartData._id %>','<%= cartData.productDetail._id %>')">Delete
                                                                                         <i class="fas fa-times"></i>
                                                                                     </button>
                                                                                 </div>
                                                                             </div>
                                                                             <div
-                                                                                class="col-md-3 col-lg-3 col-xl-3 offset-lg-1">
-                                                                                <% if(cartData.productDetail.stock===cartData.productQuantity){
-                                                                                    %>
-                                                                                    <p class="text-danger">Sorry that's
-                                                                                        all we have</p>
+                                                                                class="col-md-4 col-lg-4 col-xl-4 offset-lg-1">
+                                                                                <% if (cartData.productQuantity === (cartData.productDetail.stock-cartData.productDetail.soldCount)) { %>
+                                                                                    <p  class="text-danger">Sorry...Stock limit reached</p>
                                                                                     <% } %>
                                                                             </div>
                                                                             <% }) %>
@@ -104,13 +106,14 @@
                                                                                         <a href="home"
                                                                                             class="text-body"><i
                                                                                                 class="fas fa-long-arrow-alt-left me-2"></i>Back
-                                                                                            to
-                                                                                            shop</a>
+                                                                                            to shop
+                                                                                        </a>
                                                                                     </h6>
                                                                                 </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-lg-4 bg-secondary text-light border border-secondary">
+                                                                <div
+                                                                    class="col-lg-4 bg-secondary text-light border border-secondary">
                                                                     <div class="p-5">
                                                                         <% if(cart.length!==0){ %>
                                                                             <h3 class="fw-bold mb-5 mt-2 pt-1">Summary
@@ -120,15 +123,16 @@
                                                                                 <div
                                                                                     class="d-flex justify-content-between mb-4">
                                                                                     <p>
-                                                                                        <%= cartData.productDetail.productName%>
+                                                                                        <%=
+                                                                                            cartData.productDetail.productName%>
                                                                                     </p>
                                                                                     <p id="price">Rs.<%=
                                                                                             cartData.productPrice %>
                                                                                     </p>
                                                                                 </div>
-                                                                            <% }) %>
-                                                                            <!-- <h5 class="text-uppercase mb-3">Shipping</h5> -->
-                                                                            <!-- <div class="mb-4 pb-2">
+                                                                                <% }) %>
+                                                                                    <!-- <h5 class="text-uppercase mb-3">Shipping</h5> -->
+                                                                                    <!-- <div class="mb-4 pb-2">
                                                                                     <select class="select">
                                                                                         <option value="1">Standard-Delivery- €5.00</option>
                                                                                         <option value="2">Two</option>
@@ -172,9 +176,16 @@
                                     </section>
                                     <% } %>
 
+                                        
+
 
 
                                         <%- include('../partials/footer.ejs') %>
+
+                                            <script
+                                                src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+                                                <script src="/js/user/main.js"></script>
 
                                             <script
                                                 src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"

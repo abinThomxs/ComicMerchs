@@ -2,13 +2,15 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const sessions = require('express-session');
 const path = require('path');
+const dotenv = require('dotenv');
 
 const app = express();
+dotenv.config();
 
 const mongoose = require('mongoose');
 // const bcrypt = require('bcrypt');
-
-mongoose.connect('mongodb://127.0.0.1:27017/ComicMerchs', {
+const url = process.env.MONGO_URL;
+mongoose.connect(url, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }, (err) => {

@@ -3,11 +3,14 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable object-curly-newline */
 /* eslint-disable no-console */
+const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const Users = require('../models/signupModel');
 const Categories = require('../models/categories');
 const Products = require('../models/products');
 const Carts = require('../models/carts');
+const Otp = require('../models/otp');
+const mailer = require('../middlewares/otpValidation');
 
 let message = '';
 
@@ -82,46 +85,134 @@ const signupRender = (req, res) => {
   message = '';
 };
 
-const signupPost = (req, res) => {
-  const { firstName } = req.body;
-  const { lastName } = req.body;
-  const { gender } = req.body;
-  const { email } = req.body;
-  const { phone } = req.body;
-  const { password } = req.body;
-  const { confirmPassword } = req.body;
-  Users.findOne({ email }).then((result) => {
-    if (result) {
-      message = 'Email is already registered';
-      res.redirect('/user/signup');
-    } else if (password === confirmPassword) {
-      const user = new Users({
-        firstName,
-        lastName,
-        gender,
-        email,
-        phone,
-        password,
-        accountType: 'user',
-      });
-      user.save().then((results) => {
-        console.log(results);
-        message = 'Successfully Registered';
-        res.render('user/successful');
-        message = '';
-      });
-    } else {
-      message = 'passwords do not match ';
-      res.redirect('/user/signup');
-    }
-  });
+// const signupPost = (req, res) => {
+//   const { email } = req.body;
+//   body = new Users({ ...req.body });
+//   console.log(body);
+//   if (req.body.password === req.body.confirm_password) {
+//     Users.findOne({ email }).then((result) => {
+//       if (result) {
+//         message = 'Email is already registered';
+//         res.redirect('/user/signup');
+//       } else {
+//         const mailDetails = {
+//           from: process.env.nodmailer_email,
+//           to: body.email,
+//           subject: 'ComicMerchs OTP validation',
+//           html: `<p>Your OTP for ComicMerchs signup is ${mailer.OTP}</p>`,
+//         };
+//         mailer.mailTransporter.sendMail(mailDetails, (err) => {
+//           if (err) {
+//             console.log(err);
+//           } else {
+//             console.log('Email sent successfully');
+//             res.redirect('/user/otpValidation');
+//           }
+//         });
+//       }
+//     });
+//   } else {
+//     message = 'passwords do not match ';
+//     res.redirect('/user/signup');
+//   }
+// };
+
+const signupPost = async (req, res) => {
+  console.log('entered');
+
+  const firstName = req.body.firstName;
+  const lastName = req.body.lastName;
+  const gender = req.body.gender;
+  const email = req.body.email;
+  const phone = req.body.phone;
+  const password = req.body.password;
+  const accountType = req.body.accountType;
+
+  const OTP = `${Math.floor(1000 + Math.random() * 9000)}`;
+
+  const mailDetails = {
+    from: process.env.nodmailer_email,
+    to: email,
+    Subject: 'ComicMerchs OTP validation',
+    html: `<p>Your OTP for ComicMerchs signup is  ${OTP}</p>`,
+  };
+
+  const User = await Users.findOne({ email });
+  // console.log(User);
+  if (User) {
+    res.render('user/signup', { message: 'User Already Exist' });
+  } else {
+    const user = await Users.create({
+      firstName,
+      lastName,
+      gender,
+      email,
+      phone,
+      password,
+      accountType,
+    });
+    mailer.sendMail(mailDetails, async (err, data) => {
+      if (err) {
+        console.log(err);
+      } else {
+        const otpActive = await Otp.create({
+          userId: user.id,
+          otp: OTP,
+        });
+        res.redirect(`/otp?email=${user.email}`);
+      }
+    });
+  }
 };
 
+const getOTP = async (req, res) => {
+  const { email } = req.query;
+  const user = await Users.findOne({ Email: email });
+  res.render('user/otp', { user });
+};
+
+const postOTP = async (req, res) => {
+  const body = req.body;
+  console.log(body);
+  const verify = await Otp.findOne({
+    userId: body.userId,
+  });
+  if (body.otp == verify.otp) {
+    const user = await Users.findByIdAndUpdate({ _id: body.userId }, { isActive: true });
+    res.redirect('/userLogin');
+  } else {
+    res.redirect(`/otp?email=${user.email}`);
+  }
+};
+
+//     if (password === confirmPassword) {
+//       user = new Users({
+//         firstName,
+//         lastName,
+//         gender,
+//         email,
+//         phone,
+//         password,
+//         accountType: 'user',
+//       });
+//       user.save().then((results) => {
+//         console.log(results);
+//         message = 'Successfully Registered';
+//         res.render('user/successful');
+//         message = '';
+//       });
+//     } else {
+//       message = 'passwords do not match ';
+//       res.redirect('/user/signup');
+//     }
+//   });
+// };
+let count = 0;
 const getProductDetail = async (req, res) => {
   try {
     const { session } = req;
     const { id } = req.params;
-    let count = 0;
+
     const userData = await Users.findOne({ _id: session.userid });
     const products = await Products.findOne({ _id: id });
     const cart = await Carts.find({ userId: userData._id });
@@ -185,7 +276,7 @@ const getCart = async (req, res) => {
   ]);
 
   const sum = cart.reduce((accumulator, object) => accumulator + object.productPrice, 0);
-  const count = cart.length;
+  count = cart.length;
   console.log(count);
   res.render('user/cart', { session, customer, cart, count, sum });
 };
@@ -218,12 +309,12 @@ const getAddToCart = async (req, res) => {
           { userId: userData._id, 'product.productId': objId },
           { $inc: { 'product.$.quantity': 1 } },
         );
-        res.json({ productExist: true });
+        res.redirect(`/user/productDetail/${id}`);
       } else {
         Carts
           .updateOne({ userId: userData._id }, { $push: { product: proObj } })
           .then(() => {
-            res.json({ status: true });
+            res.redirect(`/user/productDetail/${id}`);
           });
       }
     } else {
@@ -245,6 +336,52 @@ const getAddToCart = async (req, res) => {
   }
 };
 
+const cartQuantity = async (req, res, next) => {
+  const data = req.body;
+  data.count = Number(data.count);
+  data.quantity = Number(data.quantity);
+  const objId = mongoose.Types.ObjectId(data.product);
+  const productDetail = await Products.findOne({ _id: data.product });
+  if (
+    (data.count == -1 && data.quantity == 1)
+    || (data.count == 1 && data.quantity == productDetail.stock)
+  ) {
+    res.json({ quantity: true });
+  } else {
+    await Carts
+      .aggregate([
+        {
+          $unwind: '$product',
+        },
+      ])
+      .then(() => {
+        Carts
+          .updateOne(
+            { _id: data.cart, 'product.productId': objId },
+            { $inc: { 'product.$.quantity': data.count } },
+          )
+          .then(() => {
+            res.json({ status: true });
+            next();
+          });
+      });
+  }
+};
+
+const postDeleteProduct = (req, res) => {
+  const cartid = req.body.cart;
+  const pid = req.body.product;
+  Carts.updateOne(
+    { _id: cartid },
+    { $pull: { product: { productId: pid } } },
+  ).then(() => {
+    // console.log(cart);
+    res.redirect('/user/cart');
+  }).catch((error) => {
+    console.log(error);
+  });
+};
+
 module.exports = {
   loginRender,
   loginPost,
@@ -255,4 +392,8 @@ module.exports = {
   getProductDetail,
   getCart,
   getAddToCart,
+  getOTP,
+  postOTP,
+  cartQuantity,
+  postDeleteProduct,
 };
