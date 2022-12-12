@@ -16,5 +16,7 @@ router.route('/otpValidation').get(controller.getOTP).post(controller.postOTP);
 router.post('/cartQuantity', controller.cartQuantity);
 router.post('/deleteProduct', controller.postDeleteProduct);
 router.get('/checkout', controller.getCheckout);
+router.get('/addAddress', controller.getaddAddress);
+router.post('/addAddress', controller.postaddAddress);
 
 module.exports = router;

@@ -422,6 +422,69 @@ const getCheckout = async (req, res) => {
   });
 };
 
+const getaddAddress = (req, res) => {
+  const { session } = req;
+  if (session.userid && session.accountType === 'user') {
+    res.render('user/addAddress');
+  } else {
+    res.redirect('/user/login');
+  }
+};
+
+const postaddAddress = async (req, res) => {
+  const uid = req.session.userid;
+  console.log(uid);
+  // const { addressDetail } = Address;
+  const addressDetails = await new Address({
+    // eslint-disable-next-line no-underscore-dangle
+    user_id: uid,
+    address: req.body.address,
+    city: req.body.city,
+    district: req.body.district,
+    state: req.body.state,
+    pincode: req.body.pincode,
+  });
+  await addressDetails.save().then((results) => {
+    if (results) {
+      res.redirect('/user/checkout');
+    } else {
+      res.json({ status: false });
+    }
+  });
+};
+
+// const editAddressRender = (req, res) => {
+//   const { aid } = req.params;
+//   model.Address.findOne({ _id: aid }).then((doc) => {
+//       res.render('user/editAddress', { doc });
+//   });
+// };
+
+// const editAddressPost = (req, res) => {
+//   const { aid } = req.params;
+//   const {
+//       address,
+//       state,
+//       city,
+//       pincode,
+//   } = req.body;
+//   model.Address.findByIdAndUpdate(
+//       { _id: aid },
+//       {
+//           address, state, city, pincode,
+//       },
+//   ).then(() => {
+//       res.redirect('/user/profile');
+//   });
+// };
+
+// const deleteAddress = (req, res) => {
+//   const { aid } = req.params;
+//   model.Address.findByIdAndDelete({ _id: aid }).then(() => {
+//       res.redirect('/user/profile');
+//   });
+// };
+
 module.exports = {
   loginRender,
   loginPost,
@@ -437,4 +500,6 @@ module.exports = {
   cartQuantity,
   postDeleteProduct,
   getCheckout,
+  getaddAddress,
+  postaddAddress,
 };

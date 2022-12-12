@@ -3,179 +3,154 @@
 
 <%- include('../partials/loginSignupHeader.ejs') %>
 
-  <body class="background-color-white text-black">
-    <% if ( customer===true ) { %>
-        <%- include('../partials/homeNavbar.ejs') %>
-            <% } else { %>
-                <%- include('../partials/guestNavbar.ejs') %>
-                    <% } %>
+    <body>
+        <% if ( customer===true ) { %>
+            <%- include('../partials/homeNavbar.ejs') %>
+                <% } else { %>
+                    <%- include('../partials/guestNavbar.ejs') %>
+                        <% } %>
 
-    <section class="mt-5">
-      <div class="container">
-        <!-- <div class="d-flex"> -->
-          <!-- <form action="/order-confirmed" method="post"> -->
-          <form id="checkout">
-            <div class="row d-flex justify-content-center align-items-center">
-              <div class="order col-md-6 mt-3">
-                <h5 class="text-black">Order Details:</h5>
-                <div
-                  style="border: 1px solid; width: 100%;"
-                  class="p-4 d9"
-                >
-                <h6>Products: </h6>
-                  <% allData.forEach(element => { %>
-                  <div>                    
-                     <%= element.productDetail.productName %>   Qty: <%= element.productQuantity %>  <label for="">x Rs.<%= element.productDetail.cost %></label> Price: Rs. <%= element.productPrice %></div> 
-                  <% }) %>
-                  <!-- <div>&emsp; white Shoes &emsp; Qty: 1 <label for="">x Rs.999</label>&emsp;Price: Rs.999</div> -->
-                  <hr>
-                  &emsp; <b>Total: &emsp; &emsp; &emsp;&emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; Rs.<%= sum %> </b>  
-                </div>
-              </div>
-              <div class="shipadrss col-md-6 mt-3">
-                <h5 class="text-black">Shipping Address:</h5>
-                <% address.forEach(data => { %>
-                  <div
-                  style="border: 1px solid"
-                  class="p-4 d-flex align-content-center align-items-center d9"
-                >
-                  <input type="radio" value="<%= data._id %>" name="address"/>
-                  <p class="ms-3">
-                    <b><%= name %> </b><br />
-                    <%= data.address %> <br>
-                    <%= data.state %>,
-                    <%= data.city %> <br>
-                    <%= data.pincode %> 
-                  </p>
-                </div>
-                <% }) %>
-                <% if (address.length == 1) { %>
-                  <div
-                  style="border: 1px solid"
-                  class="p-4 d-flex align-items-center d9"
-                >
-                  <a href="/user/add-address/checkout" class="btn btn-light">+ Add Address</a>
-                </div>
-                <% } %>
-              </div>
-              <div class="payment col-md-6 mt-3">
-                <h5 class="text-black">Payment:</h5>
-                <div
-                  style="border: 1px solid"
-                  class="p-4 d-flex align-content-center align-items-center d9"
-                >
-                  <input type="radio" name="pay" value="cod" class="me-1" required checked/>
-                    Cash On Delivery (COD)
-                </div>
-                <div
-                  style="border: 1px solid"
-                  class="p-4 d-flex align-content-center align-items-center d9"
-                >
-                <input type="radio" name="pay" value="online" class="me-1" required/>
-                  Pay Online
-                </div>
-              </div>
 
-              <div class="payment col-md-6 mt-3 p-5" >
-                <button type="submit" class="btn btn-light btn-lg w-100 mt-4">
-                  Confirm Order
-                </button>
-                  <a
-                    href="/user/cart"
-                    class="btn btn-light btn-lg w-100 mt-2"
-                  >
-                    Go Back
-                  </a>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </section>
-    <div class="white">
-      <!-- <%= allData %> -->
-    </div>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-      crossorigin="anonymous"
-    ></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-    <script src="/javascript/cart.js"></script>
-    <style>
-      .blue{
-        background-color: #003049;
-      }
-      .d9{
-        background-color: #d9d9d9;
-      }
-      .white{
-        color: white;
-      }
-    </style>
-    <script>
-      $("#checkout").submit((e) => {
-        // alert('hemmo')
-        e.preventDefault();
-          $.ajax({
-          url: "/order-confirmed",
-          method: "post",
-          data: $("#checkout").serialize(),
-          success: (response) => {
-                if (response[0].success) {
-                  location.href = `/order-success/${response[0].oid}`;
-                } else {
-                  razorPay(response[0].orders);
-                }
-            },
-          });
-      });
-      function razorPay(order) {
-        var options = {
-          key: "rzp_test_mqyD5x6VcWLJVE", // Enter the Key ID generated from the Dashboard
-          amount: order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-          currency: "INR",
-          name: "FootDotCom",
-          description: "Test Transaction",
-          order_id: order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-          handler: function (response) {
-            verifyPayment(response, order);
-          },
-          prefill: {
-            name: "Nihal",
-            email: "nihal@gmail.com",
-            contact: "9879999999",
-          },
-          notes: {
-            address: "Razorpay Corporate Office",
-          },
-          theme: {
-            color: "#3399cc",
-          },
-        };
-        var rzp1 = new Razorpay(options);
-        rzp1.on("payment.failed", function (response) {
-        });
-        rzp1.open();
-      }
-      function verifyPayment(payment, order) {
-      $.ajax({
-      url: "/verifyPayment",
-      data: {
-        payment,
-        order,
-      },
-      method: "post",
-      success: (response) => {
-        if (response.success) {
-          location.href = `/order-success/${response.oid}`;
-        } else {
-          location.href = "/paymentFail";
-        }
-      },
-    });
-  }
-    </script>
-  </body>
+
+                            
+                                    <section>
+                                        <div class="container py-5">
+                                            <div class="row d-flex justify-content-center align-items-center h-100">
+                                                <div class="col-12">
+                                                    <div class="card card-registration card-registration-2"
+                                                        style="border-radius: 15px">
+                                                        <div class="card-body p-0">
+                                                            <div class="row g-0 ">
+                                                                <div class="col-lg-8">
+                                                                    <div class="p-5 border">
+                                                                        <div
+                                                                            class="d-flex justify-content-between align-items-center mb-5 ">
+                                                                            <h1 class="fw-bold mb-0" style="color: rgb(3, 3, 58);">Order Details</h1>
+                                                                        </div>
+                                                                        <table id="tableForm" class="table">
+                                                                          <thead>
+                                                                              <tr>
+                                                          
+                                                                                  <th scope="col">Product</th>
+                                                                                  <th scope="col">Quatity</th>
+                                                                                  <th scope="col">Cost</th>
+                                                                                  <th scope="col">Price</th>                        
+                                                                              </tr>
+                                                                          </thead>
+                                                                          <tbody>
+                                                                              <% allData.forEach(element => { %>
+                                                                                  <tr>
+                                                                                      <td>
+                                                                                          <%= element.productDetail.productName %> 
+                                                                                      </td>
+                                                                                      <td>
+                                                                                          <%= element.productQuantity %>
+                                                                                      </td>
+                                                                                      <td>
+                                                                                          <label>Rs. <%= element.productDetail.cost %>
+                                                                                      </td>
+                                                                                      <td>
+                                                                                          Rs. <%= element.productPrice %>
+                                                                                      </td>
+                                                                                  </tr>
+                                                                              <% }) %>
+                                                                          </tbody>
+                                                                      </table>                                                                      
+                                                                      <b>Total:  Rs.<%= sum %> </b> 
+
+                                                                      <div class="payment col-md-6 mt-3 d-flex justify-content-center ms-5 px-5">
+                                                                        <h5 class="text-black">Payment:</h5>
+                                                                        <div
+                                                                          
+                                                                          class="p-1 col-md-8   text-dark" 
+                                                                        >
+                                                                          <input type="radio" name="pay" value="cod" class="me-1" required checked/>
+                                                                            Cash On Delivery
+                                                                        </div>
+                                                                        <div                                                                         
+                                                                        
+                                                                          class="p-1 col-md-8  text-dark"
+                                                                        >
+                                                                        <input type="radio" name="pay" value="online" class="me-1" style="background-color: rgb(3, 3, 58); " required/>
+                                                                          Pay Online
+                                                                        </div>
+                                                                      </div>
+                                                        
+                                                                      <div class="payment col-md-4 mt-3 p-1" >
+                                                                        <button type="submit" class="btn btn-primary btn-lg w-100 mt-2">
+                                                                          Confirm Order
+                                                                        </button>
+                                                                          <a
+                                                                            href="/user/cart"
+                                                                            class="btn btn-primary btn-lg w-100 mt-2"
+                                                                          >
+                                                                            Go Back
+                                                                          </a>
+                                                                      </div>
+                                                                        
+
+                                                                </div>
+                                                            </div>
+                                                            <div
+                                                            class="col-lg-4 text-light border border-secondary" style="background-color: rgb(3, 3, 58);">
+                                                            <div class="p-5">
+                                                                
+                                                              <div class="shipadrss col-md-12 mt-3">
+                                                                <h5 class="text-light">Shipping Address:</h5>
+                                                              
+                                                                <% address.forEach(data => { %>
+                                                                  <div
+                                                                  style="border: 1px solid"
+                                                                  class="p-4 d-flex align-content-center align-items-center d9"
+                                                                >
+                                                                  <input type="radio" value="<%= data._id %>" name="address"/>
+                                                                  <p class="ms-3">
+                                                                    <b><%= name %> </b><br />
+                                                                    <%= data.address %> <br>
+                                                                    <%= data.state %>,
+                                                                    <%= data.city %> <br>
+                                                                    <%= data.pincode %> 
+                                                                  </p>
+                                                                </div>
+                                                                <% }) %>
+                                                               
+                                                                  <div                                                                
+                                                                
+                                                                  class="mt-3 d-flex align-items-center d9"
+                                                                >
+                                                                  <a href="/user/addAddress" class="btn btn-light">+ Add New Address</a>
+                                                                </div>
+                                                                
+                                                              </div>
+
+                                                              
+
+                                                            </div>
+                                                        </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                   
+
+                                        
+
+
+
+                                        <%- include('../partials/footer.ejs') %>
+
+                                            <script
+                                                src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+                                                <script src="/js/user/main.js"></script>
+
+                                            <script
+                                                src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+                                                integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+                                                crossorigin="anonymous"></script>
+    </body>
+
 </html>
