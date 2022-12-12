@@ -9,6 +9,7 @@ const Users = require('../models/signupModel');
 const Categories = require('../models/categories');
 const Products = require('../models/products');
 const Carts = require('../models/carts');
+const Address = require('../models/address');
 const Otp = require('../models/otp');
 const mailer = require('../middlewares/otpValidation');
 
@@ -25,12 +26,9 @@ const loginPost = async (req, res) => {
       .then((result) => {
         if (result) {
           if (result.isBlock === false) {
-            console.log(result.isBlock);
             if (result.password === req.body.password) {
-              console.log(result.password);
               const { session } = req;
               session.accountType = 'user';
-              console.log(result._id);
               session.userid = result._id;
               res.redirect('/user/home');
             } else {
@@ -57,14 +55,11 @@ const userHomeRender = async (req, res) => {
   const categories = await Categories.find();
   const products = await Products.find();
   if (session.userid && session.accountType === 'user') {
-    console.log(session.userid);
     const userData = await Users.findOne({ _id: session.userid });
     const cart = await Carts.find({ userId: userData._id });
     if (cart.length) {
       count = cart[0].product.length;
     }
-    console.log(count);
-    console.log(session.userid);
     const customer = true;
     res.render('user/userHome', { customer, categories, products, count });
   } else {
@@ -118,8 +113,6 @@ const signupRender = (req, res) => {
 // };
 
 const signupPost = async (req, res) => {
-  console.log('entered');
-
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
   const gender = req.body.gender;
@@ -138,7 +131,6 @@ const signupPost = async (req, res) => {
   };
 
   const User = await Users.findOne({ email });
-  // console.log(User);
   if (User) {
     res.render('user/signup', { message: 'User Already Exist' });
   } else {
@@ -207,17 +199,16 @@ const postOTP = async (req, res) => {
 //     }
 //   });
 // };
-let count = 0;
+
 const getProductDetail = async (req, res) => {
   try {
     const { session } = req;
     const { id } = req.params;
-
+    let count = 0;
     const userData = await Users.findOne({ _id: session.userid });
     const products = await Products.findOne({ _id: id });
     const cart = await Carts.find({ userId: userData._id });
     if (session.userid && session.accountType === 'user') {
-      console.log(session.userid);
       const customer = true;
       if (cart.length) {
         count = cart[0].product.length;
@@ -276,8 +267,7 @@ const getCart = async (req, res) => {
   ]);
 
   const sum = cart.reduce((accumulator, object) => accumulator + object.productPrice, 0);
-  count = cart.length;
-  console.log(count);
+  const count = cart.length;
   res.render('user/cart', { session, customer, cart, count, sum });
 };
 
@@ -287,7 +277,6 @@ const getAddToCart = async (req, res) => {
   const products = await Products.findOne({ _id: id });
   const userData = await Users.findOne({ _id: userId });
   const objId = mongoose.Types.ObjectId(id);
-  console.log(userData);
 
   // const idUser = mongoose.Types.ObjectId(userData._id);
   const proObj = {
@@ -298,7 +287,6 @@ const getAddToCart = async (req, res) => {
     const userCart = await Carts.findOne({ userId: userData._id });
     if (userCart) {
       const proExist = userCart.product.findIndex((product) => product.productId == id);
-      console.log(proExist);
       if (proExist !== -1) {
         await Carts.aggregate([
           {
@@ -382,6 +370,58 @@ const postDeleteProduct = (req, res) => {
   });
 };
 
+const getCheckout = async (req, res) => {
+  const { session } = req;
+  const uid = mongoose.Types.ObjectId(session.userid);
+  const customer = true;
+  const cart = await Carts.aggregate([
+    {
+      $match: { userId: uid },
+    },
+    {
+      $unwind: '$product',
+    },
+    {
+      $project: {
+        productItem: '$product.productId',
+        productQuantity: '$product.quantity',
+      },
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productItem',
+        foreignField: '_id',
+        as: 'productDetail',
+      },
+    },
+    {
+      $project: {
+        productItem: 1,
+        productQuantity: 1,
+        productDetail: { $arrayElemAt: ['$productDetail', 0] },
+      },
+    },
+    {
+      $addFields: {
+        productPrice: {
+          $sum: { $multiply: ['$productQuantity', '$productDetail.cost'] },
+        },
+      },
+    },
+  ]);
+
+  const sum = cart.reduce((accumulator, object) => accumulator + object.productPrice, 0);
+  const count = cart.length;
+  Address.find({ user_id: uid }).then((address) => {
+    res.render('user/checkout', {
+      allData: cart, count, sum, name: req.session.firstName, address, customer,
+    });
+  }).catch((e) => {
+    console.log(e);
+  });
+};
+
 module.exports = {
   loginRender,
   loginPost,
@@ -396,4 +436,5 @@ module.exports = {
   postOTP,
   cartQuantity,
   postDeleteProduct,
+  getCheckout,
 };

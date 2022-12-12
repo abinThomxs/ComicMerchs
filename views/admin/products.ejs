@@ -7,7 +7,7 @@
 
         <%- include('../partials/adminHomeNav.ejs') %>
 
-            <div class="container col-md-10 ms-sm-auto me-lg-2 me-md-2 col-lg-10 px-md-4">
+            <div class="container col-md-10 ms-sm-auto me-lg-2 me-md-2 col-lg-10 px-md-4 mt-3">
                 <table id="tableForm" class="table">
                     <thead>
                         <tr>
@@ -40,7 +40,7 @@
                                 </td>
                                
                                 <td>
-                                    <%= productsData.dateCreated %>
+                                    <%= productsData.dateCreated.toDateString(); %>
                                 </td>
                                 <td>
                                     <%= productsData.soldCount %>
@@ -61,29 +61,29 @@
                         <td><a href="/admin/addProduct" class="btn btn-success">Add Product</a></td>
                     </tbody>
                 </table>
-
-                <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-                <script type="text/javascript"
-                    src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-                <script type="text/javascript"
-                    src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
-
-                <script>
-                    $(document).ready(function () {
-                        $('#tableForm').DataTable();
-                    });
-                </script>
-
-                <!-- Section: Design Block -->
-                <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
-                    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
-                    crossorigin="anonymous"></script>
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js"
-                    integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk"
-                    crossorigin="anonymous"></script>
-
             </div>
+           
+            <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+            <script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+            <script type="text/javascript"
+                src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
 
+            <script>
+                $(document).ready(function () {
+                    $('#tableForm').DataTable();
+                });
+            </script>
+
+            <!-- Section: Design Block -->
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+                integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+                crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js"
+                integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk"
+                crossorigin="anonymous"></script>
+
+        </div>
+           
 
     </body>
 

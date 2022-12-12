@@ -30,7 +30,7 @@ const signupSchema = new Schema({
   },
   accountType: {
     type: String,
-    required: true,
+    default: 'user',
   },
   isBlock: {
     type: Boolean,
