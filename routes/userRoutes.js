@@ -18,5 +18,7 @@ router.post('/deleteProduct', controller.postDeleteProduct);
 router.get('/checkout', controller.getCheckout);
 router.get('/addAddress', controller.getaddAddress);
 router.post('/addAddress', controller.postaddAddress);
+router.post('/orderConfirmed', controller.confirmOrder);
+router.get('/orderSuccess/:oid', controller.orderSuccess);
 
 module.exports = router;

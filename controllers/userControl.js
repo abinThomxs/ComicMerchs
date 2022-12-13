@@ -5,13 +5,16 @@
 /* eslint-disable no-console */
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
+const moment = require('moment');
 const Users = require('../models/signupModel');
 const Categories = require('../models/categories');
 const Products = require('../models/products');
 const Carts = require('../models/carts');
 const Address = require('../models/address');
+const Orders = require('../models/orders');
 const Otp = require('../models/otp');
 const mailer = require('../middlewares/otpValidation');
+const instance = require('../middlewares/razorpay');
 
 let message = '';
 
@@ -433,7 +436,6 @@ const getaddAddress = (req, res) => {
 
 const postaddAddress = async (req, res) => {
   const uid = req.session.userid;
-  console.log(uid);
   // const { addressDetail } = Address;
   const addressDetails = await new Address({
     // eslint-disable-next-line no-underscore-dangle
@@ -453,37 +455,144 @@ const postaddAddress = async (req, res) => {
   });
 };
 
-// const editAddressRender = (req, res) => {
-//   const { aid } = req.params;
-//   model.Address.findOne({ _id: aid }).then((doc) => {
-//       res.render('user/editAddress', { doc });
-//   });
-// };
+const confirmOrder = (req, res) => {
+  const uid = mongoose.Types.ObjectId(req.session.userid);
+  const paymethod = req.body.pay;
+  const adrs = req.body.address;
+  // const { Order } = Orders;
+  // eslint-disable-next-line no-unused-vars
+  Users.findOne({ user_id: uid }).then((userData) => {
+    Carts.aggregate([
+      {
+        $match: { userId: uid },
+      },
+      {
+        $unwind: '$product',
+      },
+      {
+        $project: {
+          productItem: '$product.productId',
+          productQuantity: '$product.quantity',
+        },
+      },
+      {
+        $lookup: {
+          from: 'products',
+          localField: 'productItem',
+          foreignField: '_id',
+          as: 'productDetail',
+        },
+      },
+      {
+        $project: {
+          productItem: 1,
+          productQuantity: 1,
+          productDetail: { $arrayElemAt: ['$productDetail', 0] },
+        },
+      },
+      {
+        $addFields: {
+          productPrice: {
+            $sum: { $multiply: ['$productQuantity', '$productDetail.cost'] },
+          },
+        },
+      },
+    ])
+      .then((result) => {
+        console.log('required', result);
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < result.length; i++) {
+          const sold = result[i].productDetail.soldCount + result[i].productQuantity;
+          console.log('total sold =', sold);
+          Products.updateMany(
+            // eslint-disable-next-line no-underscore-dangle
+            { _id: result[i].productDetail._id },
+            { soldCount: sold },
+          ).then(() => {
+          }).catch((err) => {
+            console.log(err);
+          });
+        }
+        // const count = result.length;
+        const sum = result
+          .reduce((accumulator, object) => accumulator + object.productPrice, 0);
+        Carts.findOne({ userId: uid }).then((cartData) => {
+          const order = new Orders({
+            order_id: Date.now(),
+            user_id: uid,
+            // eslint-disable-next-line no-underscore-dangle
+            address: adrs,
+            order_placed_on: moment().format('DD-MM-YYYY'),
+            products: cartData.product,
+            totalAmount: sum,
+            paymentMethod: paymethod,
+            expectedDelivery: moment().add(4, 'days').format('MMM Do YY'),
+          });
+          // eslint-disable-next-line no-unused-vars
+          order.save().then((done) => {
+            // eslint-disable-next-line semi, no-underscore-dangle
+            const oid = done._id;
+            Carts.deleteOne({ user_id: uid }).then(() => {
+              if (paymethod === 'cod') {
+                console.log('payment is cod');
+                res.json([{ success: true, oid }]);
+              } else if (paymethod === 'online') {
+                console.log('payment is online');
+                const amount = done.totalAmount * 100;
+                const options = {
+                  amount,
+                  currency: 'INR',
+                  receipt: `${oid}`,
+                };
+                instance.orders.create(options, (err, orders) => {
+                  if (err) {
+                    console.log(err);
+                  } else {
+                    res.json([{ success: false, orders }]);
+                  }
+                });
+              }
+            });
+          });
+        });
+      });
+  });
+};
 
-// const editAddressPost = (req, res) => {
-//   const { aid } = req.params;
-//   const {
-//       address,
-//       state,
-//       city,
-//       pincode,
-//   } = req.body;
-//   model.Address.findByIdAndUpdate(
-//       { _id: aid },
-//       {
-//           address, state, city, pincode,
-//       },
-//   ).then(() => {
-//       res.redirect('/user/profile');
-//   });
-// };
-
-// const deleteAddress = (req, res) => {
-//   const { aid } = req.params;
-//   model.Address.findByIdAndDelete({ _id: aid }).then(() => {
-//       res.redirect('/user/profile');
-//   });
-// };
+const orderSuccess = (req, res) => {
+  const customer = true;
+  console.log(req.params);
+  const oid = mongoose.Types.ObjectId(req.params.oid);
+  Orders.aggregate([
+    { $match: { _id: oid } },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'user_id',
+        foreignField: 'user_id',
+        as: 'user',
+      },
+    },
+    {
+      $lookup: {
+        from: 'addresses',
+        localField: 'address',
+        foreignField: '_id',
+        as: 'address',
+      },
+    },
+  ]).then((result) => {
+    console.log(result);
+    res.render('user/orderSuccess', {
+      id: result[0].order_id,
+      amount: result[0].totalAmount,
+      deladd: result[0].address[0],
+      count: result[0].products.length,
+      name: result[0].user.firstName,
+      customer,
+    });
+  });
+};
 
 module.exports = {
   loginRender,
@@ -502,4 +611,6 @@ module.exports = {
   getCheckout,
   getaddAddress,
   postaddAddress,
+  confirmOrder,
+  orderSuccess,
 };
