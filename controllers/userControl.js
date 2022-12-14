@@ -6,6 +6,7 @@
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const moment = require('moment');
+const crypto = require('crypto');
 const Users = require('../models/signupModel');
 const Categories = require('../models/categories');
 const Products = require('../models/products');
@@ -319,7 +320,7 @@ const getAddToCart = async (req, res) => {
         ],
       });
       newCart.save().then(() => {
-        res.json({ status: true });
+        // res.json({ status: true });
       });
     }
   } else {
@@ -525,6 +526,7 @@ const confirmOrder = (req, res) => {
             order_placed_on: moment().format('DD-MM-YYYY'),
             products: cartData.product,
             totalAmount: sum,
+            finalAmount: Math.round(sum + (sum * 0.15) + 100),
             paymentMethod: paymethod,
             expectedDelivery: moment().add(4, 'days').format('MMM Do YY'),
           });
@@ -538,9 +540,11 @@ const confirmOrder = (req, res) => {
                 res.json([{ success: true, oid }]);
               } else if (paymethod === 'online') {
                 console.log('payment is online');
-                const amount = done.totalAmount * 100;
+                // const amount = done.totalAmount * 100;
+                const amount = done.finalAmount * 100;
                 const options = {
                   amount,
+                  // amountFinal,
                   currency: 'INR',
                   receipt: `${oid}`,
                 };
@@ -549,6 +553,7 @@ const confirmOrder = (req, res) => {
                     console.log(err);
                   } else {
                     res.json([{ success: false, orders }]);
+                    // console.log(orders);
                   }
                 });
               }
@@ -585,6 +590,7 @@ const orderSuccess = (req, res) => {
     console.log(result);
     res.render('user/orderSuccess', {
       id: result[0].order_id,
+      amountFinal: result[0].finalAmount,
       amount: result[0].totalAmount,
       deladd: result[0].address[0],
       count: result[0].products.length,
@@ -592,6 +598,44 @@ const orderSuccess = (req, res) => {
       customer,
     });
   });
+};
+
+const verifyPayment = (req, res) => {
+  console.log('reached verify paymet');
+  const details = req.body;
+  let hmac = crypto.createHmac('sha256', '0jLCJMFP9SLEOQ1prF1JlnOE');
+  hmac.update(
+    // eslint-disable-next-line operator-linebreak, prefer-template
+    details.payment.razorpay_order_id +
+    // eslint-disable-next-line operator-linebreak
+    '|' +
+    // eslint-disable-next-line comma-dangle
+    details.payment.razorpay_payment_id
+  );
+  hmac = hmac.digest('hex');
+  // eslint-disable-next-line eqeqeq
+  console.log(details.payment.razorpay_signature  + "signatuer")
+  if (hmac == details.payment.razorpay_signature) {
+    const objId = mongoose.Types.ObjectId(details.order.receipt);
+    console.log("objId");
+    Orders
+      .updateOne({ _id: objId }, { $set: { paymentStatus: 'Paid' } })
+      .then(() => {
+        res.json({ success: true, oid: details.order.receipt });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.json({ status: false, err_message: 'payment failed' });
+      });
+  } else {
+    res.json({ status: false, err_message: 'payment failed' });
+  }
+};
+
+const paymentFailure = (req, res) => {
+  const details = req.body;
+  console.log(details);
+  res.send('payment failed');
 };
 
 module.exports = {
@@ -613,4 +657,6 @@ module.exports = {
   postaddAddress,
   confirmOrder,
   orderSuccess,
+  verifyPayment,
+  paymentFailure,
 };

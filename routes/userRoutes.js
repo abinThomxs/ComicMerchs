@@ -19,6 +19,8 @@ router.get('/checkout', controller.getCheckout);
 router.get('/addAddress', controller.getaddAddress);
 router.post('/addAddress', controller.postaddAddress);
 router.post('/orderConfirmed', controller.confirmOrder);
+router.post('/verifyPayment', controller.verifyPayment);
+router.get('/paymentFail', controller.paymentFailure);
 router.get('/orderSuccess/:oid', controller.orderSuccess);
 
 module.exports = router;
