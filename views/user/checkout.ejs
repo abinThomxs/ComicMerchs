@@ -157,7 +157,7 @@
                       success: (response) => {
                         console.log(response);
                         if (response[0].success) {
-                          location.href = `/user/orderSuccess/${response[0].oid}`;
+                          location.href = `/user/orderSuccess`;
                         } else {
                           razorPay(response[0].orders);
                           console.log(response[0].orders)

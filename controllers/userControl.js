@@ -589,12 +589,12 @@ const orderSuccess = (req, res) => {
   ]).then((result) => {
     console.log(result);
     res.render('user/orderSuccess', {
-      id: result[0].order_id,
-      amountFinal: result[0].finalAmount,
-      amount: result[0].totalAmount,
-      deladd: result[0].address[0],
-      count: result[0].products.length,
-      name: result[0].user.firstName,
+      // id: result[0].order_id,
+      // amountFinal: result[0].finalAmount,
+      // amount: result[0].totalAmount,
+      // deladd: result[0].address[0],
+      // count: result[0].products.length,
+      // name: result[0].user.firstName,
       customer,
     });
   });
