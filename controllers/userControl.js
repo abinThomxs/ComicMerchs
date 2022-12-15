@@ -20,6 +20,10 @@ const instance = require('../middlewares/razorpay');
 let message = '';
 
 const loginRender = (req, res) => {
+  const session = req.session;
+  if (session.userid) {
+    res.redirect('/user/home');
+  }
   res.render('user/login', { message });
   message = '';
 };
