@@ -3,7 +3,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable object-curly-newline */
 /* eslint-disable no-console */
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const moment = require('moment');
 const crypto = require('crypto');
@@ -88,100 +88,68 @@ const signupRender = (req, res) => {
   message = '';
 };
 
-// const signupPost = (req, res) => {
-//   const { email } = req.body;
-//   body = new Users({ ...req.body });
-//   console.log(body);
-//   if (req.body.password === req.body.confirm_password) {
-//     Users.findOne({ email }).then((result) => {
-//       if (result) {
-//         message = 'Email is already registered';
-//         res.redirect('/user/signup');
-//       } else {
-//         const mailDetails = {
-//           from: process.env.nodmailer_email,
-//           to: body.email,
-//           subject: 'ComicMerchs OTP validation',
-//           html: `<p>Your OTP for ComicMerchs signup is ${mailer.OTP}</p>`,
-//         };
-//         mailer.mailTransporter.sendMail(mailDetails, (err) => {
-//           if (err) {
-//             console.log(err);
-//           } else {
-//             console.log('Email sent successfully');
-//             res.redirect('/user/otpValidation');
-//           }
-//         });
-//       }
-//     });
-//   } else {
-//     message = 'passwords do not match ';
-//     res.redirect('/user/signup');
-//   }
-// };
-
 const signupPost = async (req, res) => {
-  const firstName = req.body.firstName;
-  const lastName = req.body.lastName;
-  const gender = req.body.gender;
-  const email = req.body.email;
-  const phone = req.body.phone;
-  const password = req.body.password;
-  const accountType = req.body.accountType;
-
   const OTP = `${Math.floor(1000 + Math.random() * 9000)}`;
-
-  const mailDetails = {
-    from: process.env.nodmailer_email,
-    to: email,
-    Subject: 'ComicMerchs OTP validation',
-    html: `<p>Your OTP for ComicMerchs signup is  ${OTP}</p>`,
-  };
-
-  const User = await Users.findOne({ email });
-  if (User) {
-    res.render('user/signup', { message: 'User Already Exist' });
+  if (req.body.password === req.body.confirmPassword) {
+    const User = await Users.findOne({ email: req.body.email });
+    if (User) {
+      res.render('user/signup', { message: 'User Already Exist' });
+      message = '';
+    } else {
+      const user = await Users.create({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        gender: req.body.gender,
+        email: req.body.email,
+        phone: req.body.phone,
+        password: req.body.password,
+        accountType: 'user',
+      });
+      const mailDetails = {
+        from: process.env.nodmailer_email,
+        to: req.body.email,
+        Subject: 'ComicMerchs OTP validation',
+        html: `<p>Your OTP for ComicMerchs signup is  ${OTP}</p>`,
+      };
+      mailer.mailTransporter.sendMail(mailDetails, async (err, data) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(data);
+          await Otp.create({
+            userId: user.id,
+            otp: OTP,
+          });
+          res.redirect(`/user/otp?email=${user.email}`);
+        }
+      });
+    }
   } else {
-    const user = await Users.create({
-      firstName,
-      lastName,
-      gender,
-      email,
-      phone,
-      password,
-      accountType,
-    });
-    mailer.sendMail(mailDetails, async (err, data) => {
-      if (err) {
-        console.log(err);
-      } else {
-        const otpActive = await Otp.create({
-          userId: user.id,
-          otp: OTP,
-        });
-        res.redirect(`/otp?email=${user.email}`);
-      }
-    });
+    message = 'Passwords do not match';
+    res.render('user/signup', { message });
+    message = '';
   }
 };
 
 const getOTP = async (req, res) => {
   const { email } = req.query;
-  const user = await Users.findOne({ Email: email });
+  const user = await Users.findOne({ email });
+  console.log('getOtp user id is', user._id);
   res.render('user/otp', { user });
 };
 
 const postOTP = async (req, res) => {
-  const body = req.body;
-  console.log(body);
+  console.log('inside post otp', req.body);
   const verify = await Otp.findOne({
-    userId: body.userId,
+    userId: req.body.userId,
   });
-  if (body.otp == verify.otp) {
-    const user = await Users.findByIdAndUpdate({ _id: body.userId }, { isActive: true });
-    res.redirect('/userLogin');
+  console.log('verify   =', verify);
+  if (req.body.otp == verify.otp) {
+    const user = await Users.updateOne({ _id: req.body.userId }, { isBlock: false });
+    res.redirect('/user/login');
+    console.log('user   =', user);
   } else {
-    res.redirect(`/otp?email=${user.email}`);
+    res.redirect('/user/otp');
   }
 };
 
@@ -618,10 +586,10 @@ const verifyPayment = (req, res) => {
   );
   hmac = hmac.digest('hex');
   // eslint-disable-next-line eqeqeq
-  console.log(details.payment.razorpay_signature  + "signatuer")
+  console.log(`${details.payment.razorpay_signature}signatuer`);
   if (hmac == details.payment.razorpay_signature) {
     const objId = mongoose.Types.ObjectId(details.order.receipt);
-    console.log("objId");
+    console.log('objId');
     Orders
       .updateOne({ _id: objId }, { $set: { paymentStatus: 'Paid' } })
       .then(() => {

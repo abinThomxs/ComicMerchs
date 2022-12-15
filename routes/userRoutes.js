@@ -10,6 +10,8 @@ router.post('/login', controller.loginPost);
 router.get('/logout', controller.logout);
 router.get('/signup', controller.signupRender);
 router.post('/signup', controller.signupPost);
+router.get('/otp', controller.getOTP);
+router.post('/otp', controller.postOTP);
 router.get('/home', controller.userHomeRender);
 router.get('/productDetail/:id', session.userSession, controller.getProductDetail);
 router.get('/addToCart/:id', session.userSession, controller.getAddToCart);

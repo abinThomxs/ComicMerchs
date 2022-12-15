@@ -34,7 +34,7 @@ const signupSchema = new Schema({
   },
   isBlock: {
     type: Boolean,
-    default: false,
+    default: true,
   },
 });
 const Users = mongoose.model('User', signupSchema);
