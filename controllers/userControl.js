@@ -170,6 +170,60 @@ const getStore = async (req, res) => {
   }
 };
 
+const getActionFigures = async (req, res) => {
+  const { session } = req;
+  let count = 0;
+  const actionFig = await Products.find({ productCategory: 'Action Figures' });
+  if (session.userid && session.accountType === 'user') {
+    const userData = await Users.findOne({ _id: session.userid });
+    const cart = await Carts.find({ userId: userData._id });
+    if (cart.length) {
+      count = cart[0].product.length;
+    }
+    const customer = true;
+    res.render('user/actionFigures', { customer, actionFig, count });
+  } else {
+    const customer = false;
+    res.render('user/actionFigures', { customer, actionFig, count });
+  }
+};
+
+const getAccessories = async (req, res) => {
+  const { session } = req;
+  let count = 0;
+  const accessories = await Products.find({ productCategory: 'Accessories' });
+  if (session.userid && session.accountType === 'user') {
+    const userData = await Users.findOne({ _id: session.userid });
+    const cart = await Carts.find({ userId: userData._id });
+    if (cart.length) {
+      count = cart[0].product.length;
+    }
+    const customer = true;
+    res.render('user/accessories', { customer, accessories, count });
+  } else {
+    const customer = false;
+    res.render('user/accessories', { customer, accessories, count });
+  }
+};
+
+const getClothes = async (req, res) => {
+  const { session } = req;
+  let count = 0;
+  const clothes = await Products.find({ productCategory: 'Clothes' });
+  if (session.userid && session.accountType === 'user') {
+    const userData = await Users.findOne({ _id: session.userid });
+    const cart = await Carts.find({ userId: userData._id });
+    if (cart.length) {
+      count = cart[0].product.length;
+    }
+    const customer = true;
+    res.render('user/clothes', { customer, clothes, count });
+  } else {
+    const customer = false;
+    res.render('user/clothes', { customer, clothes, count });
+  }
+};
+
 const getProductDetail = async (req, res) => {
   try {
     const { session } = req;
@@ -615,6 +669,9 @@ module.exports = {
   signupPost,
   signupRender,
   getStore,
+  getActionFigures,
+  getAccessories,
+  getClothes,
   getProductDetail,
   getCart,
   getAddToCart,
