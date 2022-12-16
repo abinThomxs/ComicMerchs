@@ -24,8 +24,8 @@ const adminLoginRender = (req, res) => {
   }
 };
 
-const admin = 'admin@123';
-const mypassword = '123';
+const admin = process.env.adminID;
+const mypassword = process.env.adminPassword;
 const adminLoginPost = (req, res) => {
   if (req.body.email === admin && req.body.password === mypassword) {
     const { session } = req;

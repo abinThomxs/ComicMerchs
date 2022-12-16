@@ -139,52 +139,48 @@ const getOTP = async (req, res) => {
 };
 
 const postOTP = async (req, res) => {
-  console.log('inside post otp', req.body);
   const verify = await Otp.findOne({
     userId: req.body.userId,
   });
   console.log('verify   =', verify);
   if (req.body.otp == verify.otp) {
-    const user = await Users.updateOne({ _id: req.body.userId }, { isBlock: false });
+    await Users.updateOne({ _id: req.body.userId }, { isBlock: false });
     res.redirect('/user/login');
-    console.log('user   =', user);
   } else {
     res.redirect('/user/otp');
   }
 };
 
-//     if (password === confirmPassword) {
-//       user = new Users({
-//         firstName,
-//         lastName,
-//         gender,
-//         email,
-//         phone,
-//         password,
-//         accountType: 'user',
-//       });
-//       user.save().then((results) => {
-//         console.log(results);
-//         message = 'Successfully Registered';
-//         res.render('user/successful');
-//         message = '';
-//       });
-//     } else {
-//       message = 'passwords do not match ';
-//       res.redirect('/user/signup');
-//     }
-//   });
-// };
+const getStore = async (req, res) => {
+  const { session } = req;
+  let count = 0;
+  const categories = await Categories.find();
+  const products = await Products.find();
+  if (session.userid && session.accountType === 'user') {
+    const userData = await Users.findOne({ _id: session.userid });
+    const cart = await Carts.find({ userId: userData._id });
+    if (cart.length) {
+      count = cart[0].product.length;
+    }
+    const customer = true;
+    res.render('user/store', { customer, categories, products, count });
+  } else {
+    const customer = false;
+    res.render('user/store', { customer, categories, products, count });
+  }
+};
 
 const getProductDetail = async (req, res) => {
   try {
     const { session } = req;
     const { id } = req.params;
-    let count = 0;
-    const userData = await Users.findOne({ _id: session.userid });
     const products = await Products.findOne({ _id: id });
-    const cart = await Carts.find({ userId: userData._id });
+
     if (session.userid && session.accountType === 'user') {
+      let count = 0;
+      const userData = await Users.findOne({ _id: session.userid });
+      const cart = await Carts.find({ userId: userData._id });
+
       const customer = true;
       if (cart.length) {
         count = cart[0].product.length;
@@ -193,6 +189,7 @@ const getProductDetail = async (req, res) => {
       }
       res.render('user/productDetail', { customer, products, count, session });
     } else {
+      const count = null;
       const customer = false;
       res.render('user/productDetail', { customer, products, count, session });
     }
@@ -617,6 +614,7 @@ module.exports = {
   userHomeRender,
   signupPost,
   signupRender,
+  getStore,
   getProductDetail,
   getCart,
   getAddToCart,

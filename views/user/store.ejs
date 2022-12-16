@@ -7,145 +7,124 @@
         <% if ( customer===true ) { %>
             <%- include('../partials/homeNavbar.ejs') %>
                 <% } else { %>
-                    <%- include('../partials/guestNavbar.ejs') %>
-                        <% } %>
+                    <%- include('../partials/guestNavbar.ejs') %> <% } %>
 
+                            <%- include('../partials/offcanvas.ejs') %>
 
-                        <!-- <a class="btn btn-primary" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
-                            Link with href
-                          </a> -->
-                          <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
-                            Categories
-                          </button>
-                          
-                          <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-                            <div class="offcanvas-header">
-                              <h5 class="offcanvas-title" id="offcanvasExampleLabel">All products</h5>
-                              <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                            </div>
-                            <div class="offcanvas-body">
-                              <div>
-                                Lets make it easier for you to choose your favorite Merchs with perfect categorization.
-                              </div>
-                              <div class="dropdown mt-3">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
-                                  Choose
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                  <li><a class="dropdown-item" href="#">All Products</a></li>
-                                  <li><a class="dropdown-item" href="#">Action Figures</a></li>
-                                  <li><a class="dropdown-item" href="#">Accessories</a></li>
-                                  <li><a class="dropdown-item" href="#">Clothes</a></li>
-                                </ul>
-                              </div>
-                            </div>
-                          </div>
+                                <section class="wrapper">
+                                    <div class="container-fostrap mt-5 pt-5">
+                                        <div>
+                                            <h1 class="heading my-5">
+                                                Choose your Merch
+                                            </h1>
+                                        </div>
+                                        <div class="content">
+                                            <div class="container">
+                                                <div class="row justify-content-center ">
+                                                    <% products.forEach( product=> { %>
 
+                                                        <div class="card col-xs-12 col-sm-3 mx-4 my-5 ">
 
+                                                            <a class="img-card"
+                                                                href="http://www.fostrap.com/2016/03/bootstrap-3-carousel-fade-effect.html">
+                                                                <img src="<%= product.image %> " />
+                                                            </a>
+                                                            <div class="card-content">
+                                                                <h4 class="card-title">
+                                                                    <a
+                                                                        href="http://www.fostrap.com/2016/03/bootstrap-3-carousel-fade-effect.html">
+                                                                        Rs.<%= product.cost %>
+                                                                    </a>
+                                                                </h4>
+                                                                <p class="">
+                                                                    <%= product.productName %>
+                                                                </p>
+                                                            </div>
+                                                            <div class="card-read-more">
+                                                                <a href="http://localhost:3000/user/productDetail/<%= product._id %>"
+                                                                    class="btn btn-link btn-block">
+                                                                    View Details
+                                                                </a>
+                                                            </div>
 
-                            <section class="wrapper">
-                                <div class="container-fostrap mt-5 pt-5">
-                                    <div>
-                                        <h1 class="heading my-5">
-                                            Best sellers of the month
-                                        </h1>
-                                    </div>
-                                    <div class="content">
-                                        <div class="container">
-                                            <div class="row justify-content-center">
-                                                <% products.forEach( product => { %>
-                                                    <% if (product.soldCount>=100) { %> 
-                                                    <div class="card col-xs-12 col-sm-3 mx-4">
-                                                        
-                                                        <a class="img-card"
-                                                            href="http://www.fostrap.com/2016/03/bootstrap-3-carousel-fade-effect.html">
-                                                            <img src="<%= product.image %> " />
-                                                        </a>
-                                                        <div class="card-content">
-                                                            <h4 class="card-title">
-                                                                <a
+                                                        </div>
+
+                                                        <% }) %>
+                                                        <% products.forEach( product=> { %>
+
+                                                            <div class="card col-xs-12 col-sm-3 mx-4 my-5 ">
+    
+                                                                <a class="img-card"
                                                                     href="http://www.fostrap.com/2016/03/bootstrap-3-carousel-fade-effect.html">
-                                                                    Rs.<%= product.cost %>
+                                                                    <img src="<%= product.image %> " />
                                                                 </a>
-                                                            </h4>
-                                                            <p class="">
-                                                                <%= product.productName %>
-                                                            </p>
-                                                        </div>
-                                                        <div class="card-read-more">
-                                                            <a href="http://localhost:3000/user/productDetail/<%= product._id %>"
-                                                                class="btn btn-link btn-block">
-                                                                View Details
-                                                            </a>
-                                                        </div>
-                                                        
-                                                    </div>
-                                                    <% } %> 
-                                                    <% }) %>
-                                                
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
+                                                                <div class="card-content">
+                                                                    <h4 class="card-title">
+                                                                        <a
+                                                                            href="http://www.fostrap.com/2016/03/bootstrap-3-carousel-fade-effect.html">
+                                                                            Rs.<%= product.cost %>
+                                                                        </a>
+                                                                    </h4>
+                                                                    <p class="">
+                                                                        <%= product.productName %>
+                                                                    </p>
+                                                                </div>
+                                                                <div class="card-read-more">
+                                                                    <a href="http://localhost:3000/user/productDetail/<%= product._id %>"
+                                                                        class="btn btn-link btn-block">
+                                                                        View Details
+                                                                    </a>
+                                                                </div>
+    
+                                                            </div>
+    
+                                                            <% }) %>
+                                                            <% products.forEach( product=> { %>
 
+                                                                <div class="card col-xs-12 col-sm-3 mx-4 my-5 ">
+        
+                                                                    <a class="img-card"
+                                                                        href="http://www.fostrap.com/2016/03/bootstrap-3-carousel-fade-effect.html">
+                                                                        <img src="<%= product.image %> " />
+                                                                    </a>
+                                                                    <div class="card-content">
+                                                                        <h4 class="card-title">
+                                                                            <a
+                                                                                href="http://www.fostrap.com/2016/03/bootstrap-3-carousel-fade-effect.html">
+                                                                                Rs.<%= product.cost %>
+                                                                            </a>
+                                                                        </h4>
+                                                                        <p class="">
+                                                                            <%= product.productName %>
+                                                                        </p>
+                                                                    </div>
+                                                                    <div class="card-read-more">
+                                                                        <a href="http://localhost:3000/user/productDetail/<%= product._id %>"
+                                                                            class="btn btn-link btn-block">
+                                                                            View Details
+                                                                        </a>
+                                                                    </div>
+        
+                                                                </div>
+        
+                                                                <% }) %>
 
-                            <section class="wrapper">
-                                <div class="container-fostrap mt-5 pt-5">
-                                    <div>
-                                        <h1 class="heading my-5">
-                                            Buy at half price...!!
-                                        </h1>
-                                    </div>
-                                    <div class="content">
-                                        <div class="container">
-                                            <div class="row">
-
-                                                <% products.forEach( product => { %>
-                                                    <% if (product.discount==true) { %> 
-
-                                                <div class="col-sm-12 col-md-3">
-                                                    <div class="card">
-                                                        <a class="img-card2"
-                                                            href="http://www.fostrap.com/2016/03/5-button-hover-animation-effects-css3.html">
-                                                            <img src="<%= product.image %> " />
-                                                        </a>
-                                                        <div class="card-content">
-                                                            <h4 class="card-title">
-                                                                <a
-                                                                    href="http://www.fostrap.com/2016/03/5-button-hover-animation-effects-css3.html">
-                                                                    <del class="text-primary">Rs.<%= (product.cost)*2 %></del> Rs.<%= product.cost %>
-                                                                </a>
-                                                            </h4>
-                                                            <p class="">
-                                                                <%= product.productName %>
-                                                            </p>
-                                                        </div>
-                                                        <div class="card-read-more">
-                                                            <a href="http://localhost:3000/user/productDetail/<%= product._id %>"
-                                                                class="btn btn-link btn-block">
-                                                                View Details
-                                                            </a>
-                                                        </div>
-                                                    </div>
                                                 </div>
-                                                <% } %> 
-                                                    <% }) %>
-                                                
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </section>
+                                </section>
 
 
+                                <%- include('../partials/pagination.ejs') %>
 
-                            <%- include('../partials/footer.ejs') %>
 
-                                <script
-                                    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-                                    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-                                    crossorigin="anonymous"></script>
+                                <%- include('../partials/footer.ejs') %>
+
+                                    <script
+                                        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+                                        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+                                        crossorigin="anonymous"></script>
     </body>
 
 </html>
