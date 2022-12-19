@@ -431,6 +431,7 @@ const cartQuantity = async (req, res, next) => {
   const data = req.body;
   data.count = Number(data.count);
   data.quantity = Number(data.quantity);
+  console.log('inside change');
   const objId = mongoose.Types.ObjectId(data.product);
   const productDetail = await Products.findOne({ _id: data.product });
   if (
@@ -558,6 +559,7 @@ const postaddAddress = async (req, res) => {
 const getEditAddress = (req, res) => {
   try {
     const aid = req.params.id;
+
     Address.findOne({ _id: aid }).then((doc) => {
       res.render('user/editAddress', { doc });
     }).catch(() => {
@@ -565,6 +567,43 @@ const getEditAddress = (req, res) => {
     });
   } catch (error) {
     res.redirect('/user/profile');
+  }
+};
+
+const postEditAddress = (req, res) => {
+  try {
+    const aid = req.params.id;
+    const {
+      address,
+      state,
+      city,
+      pincode,
+    } = req.body;
+    Address.updateOne(
+      { _id: aid },
+      {
+        address, state, city, pincode,
+      },
+    ).then(() => {
+      res.redirect('/user/profile');
+    }).catch(() => {
+      res.redirect('/404');
+    });
+  } catch (error) {
+    res.redirect('/404');
+  }
+};
+
+const getDeleteAddress = (req, res) => {
+  try {
+    const { id } = req.params;
+    Address.findByIdAndDelete({ _id: id }).then(() => {
+      res.redirect('/user/profile');
+    }).catch(() => {
+      res.redirect('/404');
+    });
+  } catch (error) {
+    res.redirect('/404');
   }
 };
 
@@ -769,6 +808,95 @@ const getProfile = async (req, res) => {
   }
 };
 
+const getChangePassword = (req, res) => {
+  res.render('user/changePassword', { message: '' });
+};
+
+const postChangePasswod = (req, res) => {
+  try {
+    const uid = req.session.userID;
+    const { currentPassword, password } = req.body;
+    Users.findOne({ user_id: uid }).then((result) => {
+      if (result.password === currentPassword) {
+        if (password === currentPassword) {
+          res.render('user/changePassword', { message: 'old password and new pasword is same' });
+        } else {
+          Users.findOneAndUpdate({ user_id: uid }, { password }).then(() => {
+            res.redirect('/user/profile');
+          }).catch(() => {
+            res.redirect('/404');
+          });
+        }
+      } else {
+        res.render('user/changePassword', { message: 'Current password do not match' });
+      }
+    }).catch(() => {
+      res.redirect('/404');
+    });
+  } catch (error) {
+    res.redirect('/404');
+  }
+};
+
+const getOrders = async (req, res) => {
+  try {
+    const customer = true;
+    const name = req.session.firstName;
+    const uid = req.session.userid;
+    await Orders.aggregate([
+      {
+        $match: { user_id: uid },
+      },
+      {
+        $unwind: '$products',
+      },
+      {
+        $project: {
+          productItem: '$products.productId',
+          productQuantity: '$products.quantity',
+          order_id: 1,
+          address: 1,
+          expectedDelivery: 1,
+          finalAmount: 1,
+          paymentMethod: 1,
+          paymentStatus: 1,
+          orderStatus: 1,
+          createdAt: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: 'products',
+          localField: 'productItem',
+          foreignField: '_id',
+          as: 'productDetail',
+        },
+      },
+      {
+        $unwind: '$productDetail',
+      },
+      {
+        $addFields: {
+          productPrice: {
+            $sum: { $multiply: ['$productQuantity', '$productDetail.price'] },
+          },
+        },
+      },
+    ]).then((result) => {
+      // eslint-disable-next-line no-underscore-dangle
+      Orders.find({ user_id: uid }).then((doc) => {
+        res.render('user/orders', {
+          name, customer, count: 0, productData: result, allData: doc, items: 0,
+        });
+      });
+    }).catch(() => {
+      res.redirect('/500');
+    });
+  } catch (error) {
+    res.redirect('/500');
+  }
+};
+
 module.exports = {
   loginRender,
   loginPost,
@@ -792,9 +920,14 @@ module.exports = {
   getaddAddress,
   postaddAddress,
   getEditAddress,
+  postEditAddress,
+  getDeleteAddress,
   confirmOrder,
   orderSuccess,
   verifyPayment,
   paymentFailure,
   getProfile,
+  getChangePassword,
+  postChangePasswod,
+  getOrders,
 };

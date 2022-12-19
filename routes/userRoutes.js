@@ -28,10 +28,15 @@ router.get('/checkout', session.userSession, controller.getCheckout);
 router.get('/addAddress', session.userSession, controller.getaddAddress);
 router.post('/addAddress', session.userSession, controller.postaddAddress);
 router.get('/editAddress/:id', session.userSession, controller.getEditAddress);
+router.post('/editAddress/:id', session.userSession, controller.postEditAddress);
+router.get('/deleteAddress/:id', session.userSession, controller.getDeleteAddress);
 router.post('/orderConfirmed', session.userSession, controller.confirmOrder);
 router.post('/verifyPayment', session.userSession, controller.verifyPayment);
 router.get('/paymentFail', session.userSession, controller.paymentFailure);
 router.get('/orderSuccess', session.userSession, controller.orderSuccess);
 router.get('/profile', session.userSession, controller.getProfile);
+router.get('/changePassword', session.userSession, controller.getChangePassword);
+router.post('/changePassword', session.userSession, controller.postChangePasswod);
+router.get('/orders', session.userSession, controller.getOrders);
 
 module.exports = router;
