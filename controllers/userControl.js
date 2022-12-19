@@ -21,10 +21,11 @@ let message = '';
 
 const loginRender = (req, res) => {
   const session = req.session;
+  const customer = false;
   if (session.userid) {
     res.redirect('/user/home');
   }
-  res.render('user/login', { message });
+  res.render('user/login', { message, customer });
   message = '';
 };
 
@@ -57,11 +58,31 @@ const loginPost = async (req, res) => {
   }
 };
 
+// const userHomeRender = async (req, res) => {
+//   const { session } = req;
+//   let count = 0;
+//   const categories = await Categories.find();
+//   const products = await Products.find();
+//   if (session.userid && session.accountType === 'user') {
+//     const userData = await Users.findOne({ _id: session.userid });
+//     const cart = await Carts.find({ userId: userData._id });
+//     if (cart.length) {
+//       count = cart[0].product.length;
+//     }
+//     const customer = true;
+//     res.render('user/userHome', { customer, categories, products, count });
+//   } else {
+//     const customer = false;
+//     res.render('user/userHome', { customer, categories, products, count });
+//   }
+// };
+
 const userHomeRender = async (req, res) => {
   const { session } = req;
   let count = 0;
-  const categories = await Categories.find();
-  const products = await Products.find();
+
+  const products = await Products.find().sort({ soldCount: -1 }).limit(6);
+  const discounts = await Products.find({ discount: true });
   if (session.userid && session.accountType === 'user') {
     const userData = await Users.findOne({ _id: session.userid });
     const cart = await Carts.find({ userId: userData._id });
@@ -69,10 +90,10 @@ const userHomeRender = async (req, res) => {
       count = cart[0].product.length;
     }
     const customer = true;
-    res.render('user/userHome', { customer, categories, products, count });
+    res.render('user/userHome', { customer, products, count, discounts });
   } else {
     const customer = false;
-    res.render('user/userHome', { customer, categories, products, count });
+    res.render('user/userHome', { customer, products, count, discounts });
   }
 };
 
@@ -153,9 +174,14 @@ const postOTP = async (req, res) => {
 
 const getStore = async (req, res) => {
   const { session } = req;
+  const pageNum = req.query.page;
+  const perPage = 6;
   let count = 0;
-  const categories = await Categories.find();
-  const products = await Products.find();
+  const text = '';
+  const searchvalue = '';
+  const doCount = await Products.find().countDocuments();
+
+  const products = await Products.find().skip((pageNum - 1) * perPage).limit(perPage);
   if (session.userid && session.accountType === 'user') {
     const userData = await Users.findOne({ _id: session.userid });
     const cart = await Carts.find({ userId: userData._id });
@@ -163,10 +189,60 @@ const getStore = async (req, res) => {
       count = cart[0].product.length;
     }
     const customer = true;
-    res.render('user/store', { customer, categories, products, count });
+    res.render('user/store', { page: '/', doCount, pageNum, pages: Math.ceil(doCount / perPage), customer, products, count, searchvalue, text });
   } else {
     const customer = false;
-    res.render('user/store', { customer, categories, products, count });
+    res.render('user/store', { page: '/', doCount, pageNum, pages: Math.ceil(doCount / perPage), customer, products, count, searchvalue, text });
+  }
+};
+
+const search = async (req, res) => {
+  const { session } = req;
+  try {
+    let customer;
+    const pageNum = req.query.page;
+    const perPage = 6;
+    let count = 0;
+    const searchvalue = req.body.searchinput;
+    const text = 'Results for your search: ';
+    const docCount = await Products.find({
+      $and: [
+        { difference: { $gt: 0 } },
+        { difference: { $subtract: ['$stock', 'soldCount'] } },
+        { product_name: new RegExp(searchvalue, 'i') },
+      ],
+    })
+      .countDocuments();
+
+    Products.find({
+      $and: [
+        { isBlock: false },
+        { difference: { $subtract: ['$stock', 'soldCount'] } },
+        { $gt: 0 },
+        { productName: new RegExp(searchvalue, 'i') },
+      ],
+    })
+      .skip((pageNum - 1) * perPage)
+      .limit(perPage)
+      .then((products) => {
+        Carts.findOne({ user_id: req.session.userID }).then((doc) => {
+          if (doc) {
+            count = doc.product.length;
+          }
+          if (session.userid && session.accountType === 'user') {
+            customer = true;
+            res.render('user/store', { page: '/', docCount, pageNum, pages: Math.ceil(docCount / perPage), customer, products, count, searchvalue, text });
+          } else {
+            customer = false;
+            res.render('user/store', { page: '/', docCount, pageNum, pages: Math.ceil(docCount / perPage), customer, products, count, searchvalue, text });
+          }
+        });
+      })
+      .catch(() => {
+        res.redirect('/500');
+      });
+  } catch (error) {
+    res.redirect('/500');
   }
 };
 
@@ -479,6 +555,19 @@ const postaddAddress = async (req, res) => {
   });
 };
 
+const getEditAddress = (req, res) => {
+  try {
+    const aid = req.params.id;
+    Address.findOne({ _id: aid }).then((doc) => {
+      res.render('user/editAddress', { doc });
+    }).catch(() => {
+      res.redirect('/user/profile');
+    });
+  } catch (error) {
+    res.redirect('/user/profile');
+  }
+};
+
 const confirmOrder = (req, res) => {
   const uid = mongoose.Types.ObjectId(req.session.userid);
   const paymethod = req.body.pay;
@@ -612,12 +701,6 @@ const orderSuccess = (req, res) => {
   ]).then((result) => {
     console.log(result);
     res.render('user/orderSuccess', {
-      // id: result[0].order_id,
-      // amountFinal: result[0].finalAmount,
-      // amount: result[0].totalAmount,
-      // deladd: result[0].address[0],
-      // count: result[0].products.length,
-      // name: result[0].user.firstName,
       customer,
     });
   });
@@ -661,6 +744,31 @@ const paymentFailure = (req, res) => {
   res.send('payment failed');
 };
 
+const getProfile = async (req, res) => {
+  const { session } = req;
+  let count = 0;
+  const userid = session.userid;
+  if (session.userid && session.accountType === 'user') {
+    const customer = true;
+    await Carts.findOne({ user_id: req.session.userID }).then((doc) => {
+      if (doc) {
+        count = doc.product.length;
+      }
+    });
+    await Users.findOne({ user_id: userid }).then((userdoc) => {
+      Address.find({ user_id: userid }).then((address) => {
+        res.render('user/profile', { user: userdoc, address, customer, count });
+      }).catch(() => {
+        res.redirect('/404');
+      });
+    }).catch(() => {
+      res.redirect('/404');
+    });
+  } else {
+    res.redirect('/login');
+  }
+};
+
 module.exports = {
   loginRender,
   loginPost,
@@ -669,6 +777,7 @@ module.exports = {
   signupPost,
   signupRender,
   getStore,
+  search,
   getActionFigures,
   getAccessories,
   getClothes,
@@ -682,8 +791,10 @@ module.exports = {
   getCheckout,
   getaddAddress,
   postaddAddress,
+  getEditAddress,
   confirmOrder,
   orderSuccess,
   verifyPayment,
   paymentFailure,
+  getProfile,
 };

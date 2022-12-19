@@ -14,6 +14,7 @@ router.get('/otp', controller.getOTP);
 router.post('/otp', controller.postOTP);
 router.get('/home', controller.userHomeRender);
 router.get('/store', controller.getStore);
+router.post('/store', controller.search);
 router.get('/actionFigures', controller.getActionFigures);
 router.get('/accessories', controller.getAccessories);
 router.get('/clothes', controller.getClothes);
@@ -26,9 +27,11 @@ router.post('/deleteProduct', session.userSession, controller.postDeleteProduct)
 router.get('/checkout', session.userSession, controller.getCheckout);
 router.get('/addAddress', session.userSession, controller.getaddAddress);
 router.post('/addAddress', session.userSession, controller.postaddAddress);
+router.get('/editAddress/:id', session.userSession, controller.getEditAddress);
 router.post('/orderConfirmed', session.userSession, controller.confirmOrder);
 router.post('/verifyPayment', session.userSession, controller.verifyPayment);
 router.get('/paymentFail', session.userSession, controller.paymentFailure);
 router.get('/orderSuccess', session.userSession, controller.orderSuccess);
+router.get('/profile', session.userSession, controller.getProfile);
 
 module.exports = router;

@@ -16,27 +16,27 @@
             backdrop-filter: blur(30px);
             ">
                             <div class="card-body p-5 shadow-5 text-center">
-                                <h2 class="fw-bold mb-5">Add New Address</h2>
-                                <form action="" method="post">
+                                <h2 class="fw-bold mb-5">Edit Address</h2>
+                                <form action="/user/editAddress" method="post">
 
                                     <!-- 2 column grid layout with text inputs for the first and last names -->
                                     <div class="row">
                                         <div class="col-md-6 mb-4">
                                             <div class="form-outline">
-                                                <input type="text" id="form3Example1" name="address"
+                                                <input value="<%= doc.address %>" type="text" id="form3Example1" name="address"
                                                     class="form-control" placeholder="Address" />
                                             </div>
                                         </div>
                                         <div class="col-md-6 mb-4">
                                             <div class="form-outline">
                                                 <input type="text" id="form3Example1" name="city" class="form-control"
-                                                    placeholder="City" />
+                                                value="<%= doc.City %>" placeholder="City" />
                                             </div>
                                         </div>
 
                                         <div class="col-md-6 mb-4">
                                             <div class="form-outline">
-                                                <input type="text" id="form3Example3" name="district"
+                                                <input type="text" id="form3Example3" name="district" value="<%= doc.district %>"
                                                     class="form-control" placeholder="District" />
                                             </div>
                                         </div>
@@ -44,17 +44,15 @@
                                         <div class="col-md-6 mb-4">
                                             <div class="form-outline">
                                                 <input type="text" id="form3Example3" name="state" class="form-control"
-                                                    placeholder="State" />
+                                                value="<%= doc.state %>" placeholder="State" />
                                             </div>
                                         </div>
                                         <div class="col-md-6 mb-4">
                                             <div class="form-outline">
-                                                <input type="number" id="form3Example4" name="pincode"
+                                                <input type="number" id="form3Example4" name="pincode" value="<%= doc.pincode %>"
                                                     class="form-control" placeholder="PIN Code" />
                                             </div>
                                         </div>
-
-
                                     </div>
 
 

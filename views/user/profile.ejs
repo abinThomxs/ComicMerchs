@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('../partials/loginSignupHeader.ejs') %>
+
+    <body>
+
+        <%- include('../partials/userNavbar.ejs') %>
+            <%- include('../partials/offcanvas.ejs') %>
+
+
+
+                <section class="mt-5 py-3">
+
+
+                    <div class="container py-5">
+                        <div class="row d-flex justify-content-center align-items-center h-100">
+                            <div class="col-12">
+                                <div class="card card-registration card-registration-2" style="border-radius: 15px">
+                                    <div class="card-body p-0">
+                                        <div class="row g-0 ">
+                                            <div class="col-lg-8">
+                                                <div class="p-5 border">
+                                                    <div
+                                                        class="d-flex justify-content-between align-items-center mb-5 ">
+                                                        <h1 class="fw-bold mb-0 text-black">Profile</h1>
+                                                    </div>
+                                                    <div class="align-self-center">
+                                                        <table class="table table-borderless p-md-5">
+                                                            <tr>
+                                                                <th>Name:</th>
+                                                                <td>
+                                                                    <%= user.firstName %>
+                                                                        <%= user.lastName %>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Phone:</th>
+                                                                <td>
+                                                                    <%= user.phone %>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Email:</th>
+                                                                <td>
+                                                                    <%= user.email %>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>gender:</th>
+                                                                <td>
+                                                                    <%= user.gender %>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Password:</th>
+                                                                <td>
+                                                                    <a href="/user/changePassword"
+                                                                        class="btn btn-success btn-sm">Change
+                                                                        Password</a>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                        <a href="/user/orders" class="btn btn-primary btn-sm">My
+                                                            Orders</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4 text-light border border-secondary"
+                                                style="background-color: rgb(3, 3, 58);">
+                                                <div class="p-5">
+
+                                                    <h3 class="fw-bold mb-2 mt-2">Address</h3>
+                                                    <hr class="my-4" />
+                                                    <% address.forEach(addrs=> { %>
+                                                        <address>
+                                                            <%= addrs.address %>, <br />
+                                                                <%= addrs.city %>,<%= addrs.state %>, <br />
+                                                                        <%= addrs.pincode %>
+                                                                            <br />
+                                                                            <a href="/user/editAddress/<%= addrs._id %>"
+                                                                                class="btn btn-sm btn-success">Edit</a>
+                                                                            <a href="/user/delete-address/<%= addrs._id %>"
+                                                                                class="btn btn-sm btn-danger">Delete</a>
+                                                        </address>
+                                                        <% }) %>
+                                                            <% if (address.length <=1) { %>
+                                                                <a href="/user/addAddress"
+                                                                    class="btn btn-sm btn-success">+ Add
+                                                                    address</a>
+                                                                <% } %>
+                                                </div>
+                                            </div>
+
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                </section>
+
+
+
+
+                <%- include('../partials/footer.ejs') %>
+
+                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+                    <script src="/js/user/main.js"></script>
+
+                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+                        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+                        crossorigin="anonymous"></script>
+    </body>
+
+</html>

@@ -25,23 +25,32 @@
                         <a id="navLink" class="nav-link " href="#" role="button" data-bs-toggle="offcanvas"
                         data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
                             Categories
-                        </a>
-                        <ul class="dropdown-menu"
-                            style="background: linear-gradient(180deg, #FF0000 0%, #090909 100%); color: white; font-weight: 700;">
-                            <li><a class="dropdown-item" href="#">Action Figures</a></li>
-                            <li><a class="dropdown-item" href="#">Accessories</a></li>
-                            <li><a class="dropdown-item" href="#">Clothes</a></li>
-                        </ul>
+                        </a>                       
                     </li>
-                    <li class="nav-item mt-3">
-                        <a id="navLink" class="nav-link active" aria-current="page"
-                            href="http://localhost:3000/user/login">Login</a>
-                    </li>
+
+                    <% if ( customer===true ) { %>
+                        <li class="nav-item mt-3">
+                            <a id="navLink" class="nav-link active" aria-current="page" href="http://localhost:3000/user/profile">Account</a>
+                        </li>
+                        <li class="nav-item mt-3">                       
+                            <a id="navLink" class="nav-link active" aria-current="page"
+                                href="http://localhost:3000/user/cart">Cart <span id="badge" class="badge badge-primary">
+                                    <%= count %>
+                                </span></a>
+                        </li>
+                        <li class="nav-item mt-3">
+                            <a id="navLink" class="nav-link active" aria-current="page"
+                                href="http://localhost:3000/user/logout">Logout</a>
+                        </li>
+                            <% } else { %>
+                                <li class="nav-item mt-3">
+                                    <a id="navLink" class="nav-link active" aria-current="page"
+                                        href="http://localhost:3000/user/login">Login</a>
+                                </li>
+                                    <% } %>
+                    
                 </ul>
-                <div class="d-flex form-inputs mt-3">
-                    <input class="form-control" type="text" placeholder="Search any product...">
-                    <i class="bx bx-search"></i>
-                </div>
+                
 
             </div>
         </form>
