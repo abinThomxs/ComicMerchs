@@ -2,6 +2,7 @@
 const Users = require('../models/signupModel');
 const Categories = require('../models/categories');
 const Products = require('../models/products');
+const Orders = require('../models/orders');
 
 let message = '';
 
@@ -253,6 +254,91 @@ const getDeleteProduct = async (req, res) => {
   }
 };
 
+const getOrders = (req, res) => {
+  try {
+    Orders.aggregate([
+      {
+        $lookup: {
+          from: 'products',
+          localField: 'products.productId',
+          foreignField: '_id',
+          as: 'product',
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'userfields',
+        },
+      },
+      {
+        $lookup: {
+          from: 'addresses',
+          localField: 'address',
+          foreignField: '_id',
+          as: 'userAddress',
+        },
+      },
+      {
+        $unwind: '$userfields',
+      },
+    ]).then((result) => {
+      console.log(result);
+      res.render('admin/orders', { allData: result });
+    });
+  } catch (error) {
+    res.redirect('/500');
+  }
+};
+
+const changeOrderStatus = (req, res) => {
+  try {
+    const { orderID, paymentStatus, orderStatus } = req.body;
+    Orders.updateOne(
+      { _id: orderID },
+      {
+        paymentStatus, orderStatus,
+      },
+    ).then(() => {
+      res.send('success');
+    }).catch(() => {
+      res.redirect('/500');
+    });
+  } catch (error) {
+    res.redirect('/500');
+  }
+};
+
+const orderCompeleted = (req, res) => {
+  try {
+    const { orderID } = req.body;
+    Orders.updateOne(
+      { _id: orderID },
+      { orderStatus: 'Completed' },
+    ).then(() => {
+      res.send('done');
+    });
+  } catch (error) {
+    res.redirect('/500');
+  }
+};
+
+const orderCancel = (req, res) => {
+  try {
+    const { orderID } = req.body;
+    Orders.updateOne(
+      { _id: orderID },
+      { orderStatus: 'Cancelled', paymentStatus: 'Cancelled' },
+    ).then(() => {
+      res.send('done');
+    });
+  } catch (error) {
+    res.redirect('/500');
+  }
+};
+
 module.exports = {
   adminHomeRender,
   adminLoginRender,
@@ -272,5 +358,9 @@ module.exports = {
   getEditProduct,
   postEditProduct,
   getDeleteProduct,
+  getOrders,
+  changeOrderStatus,
+  orderCompeleted,
+  orderCancel,
   logout,
 };
