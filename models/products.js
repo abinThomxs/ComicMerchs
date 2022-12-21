@@ -27,10 +27,12 @@ const products = new Schema({
     type: Number,
     required: true,
   },
-  image: {
-    type: String,
-    required: true,
-  },
+  image: [
+    {
+      url: String,
+      filename: String,
+    },
+  ],
   soldCount: {
     type: Number,
     required: true,

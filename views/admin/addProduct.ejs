@@ -17,7 +17,7 @@
             ">
                                 <div class="card-body p-5 shadow-5 text-center">
                                     <h2 class="fw-bold mb-5">Add New Product</h2>
-                                    <form action="" method="post">
+                                    <form action="" method="post" enctype="multipart/form-data">
 
                                         <!-- 2 column grid layout with text inputs for the first and last names -->
                                         <div class="row">
@@ -67,13 +67,11 @@
                                                     <span id="costError" style="color: red;"></span>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6 mb-4">
-                                                <div class="form-outline">
-                                                    <input type="string" id="form3Example4" name="image"
-                                                        class="form-control" />
-                                                    <label class="form-label" for="form3Example4">Image address</label><br>
-                                                    <span id="imageError" style="color: red;"></span>
-                                                </div>
+                                            <div class="col-md-6 mb-4">                                               
+                                                <div class="form-outline flex-fill mb-0 mt-4">
+                                                    <input class="form-control" placeholder="Product image" type="file" name="image"
+                                                      id="product_image" required multiple />
+                                                  </div>
                                             </div>
                                             <div class="col-md-6 mb-4">
                                                 <div class="form-outline">

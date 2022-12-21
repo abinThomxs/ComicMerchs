@@ -1,19 +1,12 @@
 /* eslint-disable no-console */
+const moment = require('moment');
+// const multer = require('multer');
 const Users = require('../models/signupModel');
 const Categories = require('../models/categories');
 const Products = require('../models/products');
 const Orders = require('../models/orders');
 
 let message = '';
-
-// const adminHomeRender = (req, res) => {
-//   const { session } = req;
-//   if (session.userid && session.accountType === 'admin') {
-//     res.render('admin/adminHome');
-//   } else {
-//     res.redirect('/admin/login');
-//   }
-// };
 
 const adminHomeRender = async (req, res) => {
   try {
@@ -213,9 +206,32 @@ const getAddProduct = async (req, res) => {
   }
 };
 
+// const postAddProduct = async (req, res) => {
+//   try {
+//     console.log(req.body);
+//     const products = new Products({
+//       productName: req.body.productName,
+//       description: req.body.description,
+//       productCategory: req.body.productCategory,
+//       stock: req.body.stock,
+//       cost: req.body.cost,
+//       soldCount: req.body.soldCount,
+//       image: req.body.image,
+//       discount: req.body.discount,
+//     });
+//     const productsData = await products.save();
+//     if (productsData) {
+//       res.redirect('/admin/products');
+//     } else {
+//       res.render('admin/addProduct');
+//     }
+//   } catch (error) {
+//     console.log(error.message);
+//   }
+// };
+
 const postAddProduct = async (req, res) => {
   try {
-    console.log(req.body);
     const products = new Products({
       productName: req.body.productName,
       description: req.body.description,
@@ -223,10 +239,14 @@ const postAddProduct = async (req, res) => {
       stock: req.body.stock,
       cost: req.body.cost,
       soldCount: req.body.soldCount,
-      image: req.body.image,
       discount: req.body.discount,
     });
+    products.image = req.files.map((f) => ({ url: f.path, filename: f.filename }));
+    console.log(req.files);
+    console.log('product after map', products);
+
     const productsData = await products.save();
+    console.log(productsData);
     if (productsData) {
       res.redirect('/admin/products');
     } else {
@@ -374,6 +394,116 @@ const orderCancel = (req, res) => {
   }
 };
 
+const getSalesReport = async (req, res) => {
+  try {
+    const today = moment().startOf('day');
+    const endtoday = moment().endOf('day');
+    const monthstart = moment().startOf('month');
+    const monthend = moment().endOf('month');
+    const yearstart = moment().startOf('year');
+    const yearend = moment().endOf('year');
+    const daliyReport = await Orders.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: today.toDate(),
+            $lte: endtoday.toDate(),
+          },
+        },
+      },
+      {
+        $lookup:
+              {
+                from: 'users',
+                localField: 'user_id',
+                foreignField: '_id',
+                as: 'user',
+              },
+      },
+
+      {
+        $project: {
+          order_id: 1,
+          user: 1,
+          paymentStatus: 1,
+          finalAmount: 1,
+          orderStatus: 1,
+        },
+      },
+      {
+        $unwind: '$user',
+      },
+    ]);
+    console.log(daliyReport);
+    const monthReport = await Orders.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: monthstart.toDate(),
+            $lte: monthend.toDate(),
+          },
+        },
+      },
+      {
+        $lookup:
+              {
+                from: 'users',
+                localField: 'user_id',
+                foreignField: '_id',
+                as: 'user',
+              },
+      },
+
+      {
+        $project: {
+          order_id: 1,
+          user: 1,
+          paymentStatus: 1,
+          finalAmount: 1,
+          orderStatus: 1,
+        },
+      },
+      {
+        $unwind: '$user',
+      },
+    ]);
+    const yearReport = await Orders.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: yearstart.toDate(),
+            $lte: yearend.toDate(),
+          },
+        },
+      },
+      {
+        $lookup:
+              {
+                from: 'users',
+                localField: 'user_id',
+                foreignField: '_id',
+                as: 'user',
+              },
+      },
+      {
+        $project: {
+          order_id: 1,
+          user: 1,
+          paymentStatus: 1,
+          totalAmount: 1,
+          orderStatus: 1,
+        },
+      },
+      {
+        $unwind: '$user',
+      },
+    ]);
+    res.render('admin/salesReport', { today: daliyReport, month: monthReport, year: yearReport });
+  } catch (error) {
+    res.redirect('/500');
+  }
+};
+
 module.exports = {
   adminHomeRender,
   adminLoginRender,
@@ -397,5 +527,6 @@ module.exports = {
   changeOrderStatus,
   orderCompeleted,
   orderCancel,
+  getSalesReport,
   logout,
 };

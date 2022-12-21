@@ -1,113 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <%- include('../partials/adminHeader.ejs') %>
+<%- include('../partials/adminHeader.ejs') %>
 
     <body>
         <%- include('../partials/adminHomeNav.ejs') %>
-           
 
-                <!-- Jumbotron -->
-                <div class="container col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                    <div class="row g-0 align-items-center justify-content-center">
-                        <div class="col-lg-6 mb-5 mb-lg-0 mt-5 pt-5">
-                            <div class="card cascading-right" style="
+
+            <!-- Jumbotron -->
+            <div class="container col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="row g-0 align-items-center justify-content-center">
+                    <div class="col-lg-6 mb-5 mb-lg-0 mt-5 pt-5">
+                        <div class="card cascading-right" style="
             background: hsla(0, 0%, 100%, 0.55);
             backdrop-filter: blur(30px);
             ">
-                                <div class="card-body p-5 shadow-5 text-center">
-                                    <h2 class="fw-bold mb-5">Edit Product</h2>
-                                    <form action="" method="post" onsubmit="return validation()">
+                            <div class="card-body p-5 shadow-5 text-center">
+                                <h2 class="fw-bold mb-5">Edit Product</h2>
+                                <form action="" method="post" enctype="multipart/form-data">
 
-                                        <!-- 2 column grid layout with text inputs for the first and last names -->
-                                        <div class="row">
-                                            <div class="col-md-6 mb-4">
-                                                <div class="form-outline">
-                                                    <input value="<%= productsData.productName %>" type="text" id="form3Example1" name="productName"
-                                                        class="form-control" />
+                                    <!-- 2 column grid layout with text inputs for the first and last names -->
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline">
+                                                <input value="<%= productsData.productName %>" type="text"
+                                                    id="form3Example1" name="productName" class="form-control" />
 
-                                                    <label class="form-label" for="form3Example1">Product Name</label><br>
-                                                    <span id="productnameError" style="color: red;"></span>
-                                                </div>
+                                                <label class="form-label" for="form3Example1">Product Name</label><br>
+                                                <span id="productnameError" style="color: red;"></span>
                                             </div>
-                                            <div class="col-md-6 mb-4">
-                                                <div class="form-outline">
-                                                    <input value="<%= productsData.description %>" type="text" id="form3Example1" name="description"
-                                                        class="form-control" />
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline">
+                                                <input value="<%= productsData.description %>" type="text"
+                                                    id="form3Example1" name="description" class="form-control" />
 
-                                                    <label class="form-label" for="form3Example1">Description</label><br>
-                                                    <span id="descriptionError" style="color: red;"></span>
-                                                </div>
+                                                <label class="form-label" for="form3Example1">Description</label><br>
+                                                <span id="descriptionError" style="color: red;"></span>
                                             </div>
-                                            <div class="col-md-6 mb-4">
-                                                <div class="form-outline">
-                                                    <input value="<%= productsData.productCategory %>" type="text" id="form3Example2" name="productCategory"
-                                                        class="form-control" />
-                                                    <label class="form-label" for="form3Example2">Category</label><br>
-                                                    <span id="productcategoryError" style="color: red;"></span>
-                                                </div>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline">
+                                                <input value="<%= productsData.productCategory %>" type="text"
+                                                    id="form3Example2" name="productCategory" class="form-control" />
+                                                <label class="form-label" for="form3Example2">Category</label><br>
+                                                <span id="productcategoryError" style="color: red;"></span>
                                             </div>
-                                            <div class="col-md-6 mb-4">
-                                                <div class="form-outline">
-                                                    <input value="<%= productsData.stock %>" type="number" id="form3Example3" name="stock"
-                                                        class="form-control" />
-                                                    <label class="form-label" for="form3Example3">Stock Quantity</label><br>
-                                                    <span id="stockError" style="color: red;"></span>
-                                                </div>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline">
+                                                <input value="<%= productsData.stock %>" type="number"
+                                                    id="form3Example3" name="stock" class="form-control" />
+                                                <label class="form-label" for="form3Example3">Stock Quantity</label><br>
+                                                <span id="stockError" style="color: red;"></span>
                                             </div>
-                                            <div class="col-md-6 mb-4">
-                                                <div class="form-outline">
-                                                    <input value="<%= productsData.cost %>" type="number" id="form3Example4" name="cost"
-                                                        class="form-control" />
-                                                    <label class="form-label" for="form3Example4">Cost</label><br>
-                                                    <span id="costError" style="color: red;"></span>
-                                                </div>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline">
+                                                <input value="<%= productsData.cost %>" type="number" id="form3Example4"
+                                                    name="cost" class="form-control" />
+                                                <label class="form-label" for="form3Example4">Cost</label><br>
+                                                <span id="costError" style="color: red;"></span>
                                             </div>
-                                            <div class="col-md-6 mb-4">
-                                                <div class="form-outline">
-                                                    <input value="<%= productsData.image %>" type="string" id="form3Example4" name="image"
-                                                        class="form-control" />
-                                                    <label class="form-label" for="form3Example4">Image address</label><br>
-                                                    <span id="imageError" style="color: red;"></span>
-                                                </div>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline flex-fill mb-0 mt-4">
+                                                <input class="form-control" placeholder="Product image" type="file"
+                                                    name="image" id="product_image" required multiple />
                                             </div>
-                                            <div class="col-md-6 mb-4">
-                                                <div class="form-outline">
-                                                    <input value="<%= productsData.soldCount %>" type="number" id="form3Example5" name="soldCount"
-                                                        class="form-control" />
-                                                    <label class="form-label" for="form3Example5">Sold Count</label><br>
-                                                    <span id="imageError" style="color: red;"></span>
-                                                </div>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline">
+                                                <input value="<%= productsData.soldCount %>" type="number"
+                                                    id="form3Example5" name="soldCount" class="form-control" />
+                                                <label class="form-label" for="form3Example5">Sold Count</label><br>
+                                                <span id="imageError" style="color: red;"></span>
                                             </div>
-                                            <div class="col-md-6 mb-4">
-                                                <div class="form-outline">
-                                                    <select class="form-select" type="text" id="form3Example5" name="discount" aria-label="Default select example">
-                                                        <option selected>Choose</option>
-                                                        <option value="true">True</option>
-                                                        <option value="false">False</option>                                                        
-                                                      </select>
-                                                    <label class="form-label" for="form3Example4">Discount</label><br>
-                                                    <span id="soldcountError" style="color: red;"></span>
-                                                </div>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline">
+                                                <select class="form-select" type="text" id="form3Example5"
+                                                    name="discount" aria-label="Default select example">
+                                                    <option selected>Choose</option>
+                                                    <option value="true">True</option>
+                                                    <option value="false">False</option>
+                                                </select>
+                                                <label class="form-label" for="form3Example4">Discount</label><br>
+                                                <span id="soldcountError" style="color: red;"></span>
                                             </div>
-                                            
                                         </div>
 
-                                        
-                                   
+                                    </div>
 
-                                        <!-- Submit button -->
-                                        <button type="submit" class="btn btn-primary btn-block mb-4">
-                                            Submit
-                                        </button>
-                                    </form>
-                                </div>
+
+
+
+                                    <!-- Submit button -->
+                                    <button type="submit" class="btn btn-primary btn-block mb-4">
+                                        Submit
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Jumbotron -->
-           
+            </div>
+            <!-- Jumbotron -->
+
             <!-- <script src="/public/javascript/validate.js"></script> -->
             <!-- Section: Design Block -->
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
@@ -149,35 +148,35 @@
                     } else {
                         document.getElementById('productcatogeryError').innerHTML = ""
                     }
-                    
+
                     if (stock != Number) {
                         document.getElementById('stockError').innerHTML = "Enter a Number"
-                        flag = 1                    
+                        flag = 1
                     } else {
                         document.getElementById('stockError').innerHTML = ""
                     }
 
                     if (cost != Number) {
                         document.getElementById('costError').innerHTML = "Enter a Number"
-                        flag = 1                    
+                        flag = 1
                     } else {
                         document.getElementById('costError').innerHTML = ""
                     }
 
                     if (image == '') {
                         document.getElementById('imageError').innerHTML = "Image URL Required"
-                        flag = 1                   
+                        flag = 1
                     } else {
                         document.getElementById('imageError').innerHTML = ""
                     }
 
                     if (isFeatured != 'true' || isFeatured != 'false') {
                         document.getElementById('isfeaturedError').innerHTML = "Enter true or false"
-                        flag = 1                   
+                        flag = 1
                     } else {
                         document.getElementById('isfeaturedError').innerHTML = ""
                     }
-                 
+
 
                     if (flag == 1) {
                         return false

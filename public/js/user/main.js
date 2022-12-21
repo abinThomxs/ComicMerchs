@@ -14,7 +14,10 @@ function changeQuantity(cartId, productId, count) {
     },
     method: 'post',
     success: (res) => {
-      // document.getElementById('quantity').innerText = Number(qty) + Number(count);
+      // if (res.status) {
+      //   document.getElementById(productId).innerHTML = Number(qty) + Number(count);
+      // }
+
       location.reload();
       // $('#quantity').load(`${document.URL} #quantity`);
     },

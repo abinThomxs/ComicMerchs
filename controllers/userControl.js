@@ -105,7 +105,8 @@ const logout = (req, res) => {
 };
 
 const signupRender = (req, res) => {
-  res.render('user/signup', { message });
+  const customer = false;
+  res.render('user/signup', { message, customer });
   message = '';
 };
 
@@ -787,6 +788,7 @@ const getProfile = async (req, res) => {
   const { session } = req;
   let count = 0;
   const userid = session.userid;
+  console.log(userid);
   if (session.userid && session.accountType === 'user') {
     const customer = true;
     await Carts.findOne({ user_id: req.session.userID }).then((doc) => {
@@ -794,8 +796,9 @@ const getProfile = async (req, res) => {
         count = doc.product.length;
       }
     });
-    await Users.findOne({ user_id: userid }).then((userdoc) => {
+    await Users.findOne({ _id: userid }).then((userdoc) => {
       Address.find({ user_id: userid }).then((address) => {
+        console.log(userdoc);
         res.render('user/profile', { user: userdoc, address, customer, count });
       }).catch(() => {
         res.redirect('/404');

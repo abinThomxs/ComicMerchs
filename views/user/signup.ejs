@@ -15,66 +15,76 @@
                                 <div class="card-body p-5">
                                     <h2 id="createAccount" class="text text-center mb-3">Create an Account</h2>
 
-                                    <form action="/user/signup" method="post">
+                                    <form action="" method="post" id="sign_form" name="sign_form">
                                         <% if ( message.length> 0) { %>
                                             <h4 class="wrongID">
                                                 <%= message %>
                                             </h4>
                                             <% } %>
-                                                <div class=" form-outline mt-5">
+                                                <div class=" form-outline mt-5 input-control">
                                                     <label class="form-label" for="form3Example1cg">First
                                                         Name</label>
                                                     <input type="text" id="firstName" name="firstName"
-                                                        class="form-control form-control-lg" placeholder="First Name" />
-                                                    <p id="firstnameerror" style="color: red"></p>
+                                                        class="form-control" />
+                                                        <div id="nameerror" class="error-message text-light text-strong"></div>
                                                 </div>
-                                                <div class=" form-outline mt-4">
+                                                <div class=" form-outline input-control mt-4">
                                                     <label class="form-label" for="form3Example1cg">Last
                                                         Name</label>
                                                     <input type="text" id="lastName" name="lastName"
-                                                        class="form-control form-control-lg" placeholder="Last Name" />
-                                                    <p id="lastnameerror" style="color: red"></p>
+                                                        class="form-control"/>
+                                                        <div id="nameerror" class="error-message text-light text-strong"></div>
                                                 </div>
-                                                <div class=" form-outline mt-4">
+                                                <div class=" form-outline input-control mt-4">
                                                     <label class="form-label" for="form3Example1cg">Gender
                                                     </label>
                                                     <input type="text" id="gender" name="gender"
-                                                        class="form-control form-control-lg"
-                                                        placeholder="Male, Female, Other" />
-                                                    <p id="gendererror" style="color: red"></p>
+                                                        class="form-control form-control-lg"/>
+                                                        <div id="nameerror" class="error-message text-light text-strong"></div>
                                                 </div>
-                                                <div class="form-outline mt-4">
+                                                <div class="form-outline input-control mt-4">
                                                     <label class="form-label" for="form3Example3cg">Your
                                                         Email</label>
-                                                    <input type="email" id="email" name="email"
-                                                        class="form-control form-control-lg"
-                                                        placeholder="example@example.com" />
-                                                    <p id="emailerror" style="color: red"></p>
+                                                    <input type="text" id="email" name="email"
+                                                        class="form-control"/>
+                                                        <div id="emailerror" class="error-message text-light text-strong"></div>
                                                 </div>
-                                                <div class="form-outline mt-4">
+                                                <div class="form-outline input-control mt-4">
                                                     <label class="form-label" for="form3Example3cg">Mobile
                                                         Number</label>
-                                                    <input type="number" id="phone" name="phone"
-                                                        class="form-control form-control-lg"
-                                                        placeholder="10 digit number" />
-                                                    <p id="phoneererror" style="color: red"></p>
+                                                    <input type="text" id="phone" name="phone"
+                                                        class="form-control" />
+                                                        <div id="phoneerror" class="error-message text-light text-strong"></div>
                                                 </div>
-                                                <div class=" form-outline mt-4">
+                                                <div class=" form-outline input-control mt-4">
                                                     <label class="form-label" for="form3Example4cg">Password</label>
                                                     <input type="password" id="password" name="password"
-                                                        class="form-control form-control-lg" />
-                                                    <p id="passwordererror" style="color: red"></p>
+                                                        class="form-control" />
+                                                        <div id="passworderror" class="error-message text-light text-strong"></div>
                                                 </div>
 
-                                                <div class=" form-outline mt-4">
+                                                <div class=" form-outline input-control mt-4">
                                                     <label class="form-label" for="form3Example4cdg">Repeat your
                                                         password</label>
-                                                    <input type="password" id="form3Example4cdg" name="confirmPassword"
+                                                    <input type="password" id="confirmPassword" name="confirmPassword"
                                                         class=" form-control form-control-lg" />
-                                                    <p id="conpassworderror" style="color: red"></p>
+                                                        <div id="conpassworderror" class="error-message text-light text-strong"></div>
                                                 </div>
+                                                <div class="col-12 input-control">
+                                                    <div class="form-check">
+                                                      <input
+                                                        class="form-check-input"
+                                                        type="checkbox"
+                                                        onclick="myFunction()"
+                                                        id="gridCheck"
+                                                      />
+                                                      <label class="form-check-label text-light text-strong" for="gridCheck">
+                                                        Show password
+                                                      </label>
+                                                    </div>
+                                                  </div>
                                                 <div class="d-flex justify-content-center">
-                                                    <button type="submit" value="submit"
+                                                    <button type="submit"
                                                         class="btn btn-primary btn-block btn-lg gradient-custom-4 text-body mt-4">Register</button>
                                                 </div>
 
