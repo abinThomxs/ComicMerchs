@@ -1,5 +1,5 @@
-/* eslint-disable no-restricted-globals */
 /* eslint-disable linebreak-style */
+/* eslint-disable no-restricted-globals */
 /* eslint-disable no-param-reassign */
 /* eslint-disable radix */
 /* eslint-disable no-unused-vars */

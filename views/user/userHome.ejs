@@ -9,7 +9,7 @@
             <%- include('../partials/userNavbar.ejs') %>
 
 
-                <section class="mt-4">
+                <section class="mt-4 col-sm-12 mt-5 mt-sm-0">
                     <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
@@ -37,7 +37,6 @@
                 </section>
 
 
-
                 <section class="wrapper">
                     <div class="container-fostrap mt-5 pt-5">
                         <div>
@@ -47,35 +46,37 @@
                         </div>
                         <div class="content">
                             <div class="container">
-                                <div class="row justify-content-center">
+                                <div class="row">
+
                                     <% products.forEach( product=> { %>
-                                        <!-- <% if (product.soldCount>=100) { %> -->
-                                        <div class="card col-xs-12 col-sm-3 mx-4">
 
-                                            <a class="img-card"
-                                                href="http://www.fostrap.com/2016/03/bootstrap-3-carousel-fade-effect.html">
-                                                <img src="<%= product.image[0].url %> " />
-                                            </a>
-                                            <div class="card-content">
-                                                <h4 class="card-title">
-                                                    <a
-                                                        href="http://www.fostrap.com/2016/03/bootstrap-3-carousel-fade-effect.html">
-                                                        Rs.<%= product.cost %>
-                                                    </a>
-                                                </h4>
-                                                <p class="">
-                                                    <%= product.productName %>
-                                                </p>
-                                            </div>
-                                            <div class="card-read-more">
-                                                <a href="http://localhost:3000/user/productDetail/<%= product._id %>"
-                                                    class="btn btn-link btn-block">
-                                                    View Details
+
+                                        <div class="col-sm-12 col-md-4 px-md-5">
+                                            <div class="card">
+                                                <a class="img-card2"
+                                                    href="http://localhost:3000/user/productDetail/<%= product._id %>">
+                                                    <img src="<%= product.image[0].url %> " />
                                                 </a>
+                                                <div class="card-content">
+                                                    <h4 class="card-title">
+                                                        <a
+                                                            href="">                                                            
+                                                            Rs.<%= product.cost %>
+                                                        </a>
+                                                    </h4>
+                                                    <p class="">
+                                                        <%= product.productName %>
+                                                    </p>
+                                                </div>
+                                                <div class="card-read-more">
+                                                    <a href="http://localhost:3000/user/productDetail/<%= product._id %>"
+                                                        class="btn btn-link btn-block">
+                                                        View Details
+                                                    </a>
+                                                </div>
                                             </div>
-
                                         </div>
-                                        <!-- <% } %> -->
+
                                         <% }) %>
 
                                 </div>
@@ -102,13 +103,13 @@
                                         <div class="col-sm-12 col-md-3">
                                             <div class="card">
                                                 <a class="img-card2"
-                                                    href="http://www.fostrap.com/2016/03/5-button-hover-animation-effects-css3.html">
+                                                    href="http://localhost:3000/user/productDetail/<%= discount._id %>">
                                                     <img src="<%= discount.image[0].url %> " />
                                                 </a>
                                                 <div class="card-content">
                                                     <h4 class="card-title">
                                                         <a
-                                                            href="http://www.fostrap.com/2016/03/5-button-hover-animation-effects-css3.html">
+                                                            href="">
                                                             <del class="text-primary">Rs.<%= (discount.cost)*2 %></del>
                                                             Rs.<%= discount.cost %>
                                                         </a>

@@ -64,7 +64,7 @@
                                                 Rs.<%= products.cost %>
                                             </h2>
                                             <h4 class="text-primary">
-                                                <%= products.soldCount/products.stock*100 %>% Sold
+                                                <%= Math.round(products.soldCount/products.stock*100) %>% Sold
                                             </h4>
                                             <p class="">
                                                 <%= products.description %>
