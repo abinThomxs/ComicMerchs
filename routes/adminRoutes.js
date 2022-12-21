@@ -7,7 +7,7 @@ const controller = require('../controllers/adminControl');
 
 router.route('/login').get(controller.adminLoginRender).post(controller.adminLoginPost);
 router.get('/logout', controller.logout);
-router.get('/home', controller.adminHomeRender);
+router.get('/home', session.adminSession, controller.adminHomeRender);
 router.get('/users', session.adminSession, controller.adminUsersRender);
 router.get('/blockuser/:id', session.adminSession, controller.blockUser);
 router.get('/unblockuser/:id', session.adminSession, controller.unblockUser);

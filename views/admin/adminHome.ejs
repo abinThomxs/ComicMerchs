@@ -2,6 +2,9 @@
 <html lang="en">
 
   <%- include('../partials/adminHeader.ejs') %>
+  <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+
+  <script src="https://kit.fontawesome.com/0122127a2d.js" crossorigin="anonymous"></script>
 
 <body>
 
@@ -25,139 +28,106 @@
           </div>
         </div>
 
-        <!-- <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas> -->
-        <img src="/images/dashboard.png" alt="" class="my-4 w-100 chartjs-render-monitor" id="myChart" width="900"
-          height="380" style="display: block;" width="900" height="380">
-        <!-- <canvas class="my-4 w-100 chartjs-render-monitor" id="myChart" width="548" height="231" style="display: block; width: 548px; height: 231px;"></canvas> -->
 
-        <h2>Section title</h2>
-        <div class="table-responsive">
-          <table class="table table-striped table-sm">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Header</th>
-                <th scope="col">Header</th>
-                <th scope="col">Header</th>
-                <th scope="col">Header</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1,001</td>
-                <td>random</td>
-                <td>data</td>
-                <td>placeholder</td>
-                <td>text</td>
-              </tr>
-              <tr>
-                <td>1,002</td>
-                <td>placeholder</td>
-                <td>irrelevant</td>
-                <td>visual</td>
-                <td>layout</td>
-              </tr>
-              <tr>
-                <td>1,003</td>
-                <td>data</td>
-                <td>rich</td>
-                <td>dashboard</td>
-                <td>tabular</td>
-              </tr>
-              <tr>
-                <td>1,003</td>
-                <td>information</td>
-                <td>placeholder</td>
-                <td>illustrative</td>
-                <td>data</td>
-              </tr>
-              <tr>
-                <td>1,004</td>
-                <td>text</td>
-                <td>random</td>
-                <td>layout</td>
-                <td>dashboard</td>
-              </tr>
-              <tr>
-                <td>1,005</td>
-                <td>dashboard</td>
-                <td>irrelevant</td>
-                <td>text</td>
-                <td>placeholder</td>
-              </tr>
-              <tr>
-                <td>1,006</td>
-                <td>dashboard</td>
-                <td>illustrative</td>
-                <td>rich</td>
-                <td>data</td>
-              </tr>
-              <tr>
-                <td>1,007</td>
-                <td>placeholder</td>
-                <td>tabular</td>
-                <td>information</td>
-                <td>irrelevant</td>
-              </tr>
-              <tr>
-                <td>1,008</td>
-                <td>random</td>
-                <td>data</td>
-                <td>placeholder</td>
-                <td>text</td>
-              </tr>
-              <tr>
-                <td>1,009</td>
-                <td>placeholder</td>
-                <td>irrelevant</td>
-                <td>visual</td>
-                <td>layout</td>
-              </tr>
-              <tr>
-                <td>1,010</td>
-                <td>data</td>
-                <td>rich</td>
-                <td>dashboard</td>
-                <td>tabular</td>
-              </tr>
-              <tr>
-                <td>1,011</td>
-                <td>information</td>
-                <td>placeholder</td>
-                <td>illustrative</td>
-                <td>data</td>
-              </tr>
-              <tr>
-                <td>1,012</td>
-                <td>text</td>
-                <td>placeholder</td>
-                <td>layout</td>
-                <td>dashboard</td>
-              </tr>
-              <tr>
-                <td>1,013</td>
-                <td>dashboard</td>
-                <td>irrelevant</td>
-                <td>text</td>
-                <td>visual</td>
-              </tr>
-              <tr>
-                <td>1,014</td>
-                <td>dashboard</td>
-                <td>illustrative</td>
-                <td>rich</td>
-                <td>data</td>
-              </tr>
-              <tr>
-                <td>1,015</td>
-                <td>random</td>
-                <td>tabular</td>
-                <td>information</td>
-                <td>text</td>
-              </tr>
-            </tbody>
-          </table>
+
+        <div class="values row justify-content-evenly">
+          <div class="d-flex justify-content-center ">
+            <div class="val-box col-md-3 d-flex justify-content-center">
+              <i class="fas fa-2x fa-regular fa-users  fa-beat-fade p-3"></i>
+              <div>
+                <h3><%= usercount %></h3>
+                <span>Total Users</span>
+              </div>
+            </div>
+            <div class="val-box col-md-3 d-flex justify-content-center">
+              <i class="fas fa-2x fa-regular fa-basket-shopping  fa-beat-fade p-3"></i>
+              <div>
+                <h3><%= productcount %></h3>
+                <span>Total Products</span>
+              </div>
+            </div>
+            <div class="val-box col-md-3 d-flex justify-content-center">
+              <i class="fas fa-2x fa-regular fa-list-check  fa-beat-fade p-3"></i>
+              <div>
+                <h3><%= ordercount %></h3>
+                <span>Total Orders</span>
+              </div>
+            </div>
+            <div class="val-box col-md-3 d-flex justify-content-center">
+              <i class="fas fa-2x fa-light fa-cash-register  fa-beat-fade p-3"></i>
+              <div>
+                <h3><%= totalamount %></h3>
+                <span>Total Income</span>
+              </div>
+            </div>
+
+          </div>
+          
+          <div class="row gap-2 justify-content-center p-2">
+            <div class="col-md-7 mt-5 gbg" style="border-radius: 5px">
+              <canvas id="ordersStatusChart" class="h-100"> </canvas>
+            </div>
+            <div class="col-md-4 mt-5 gbg" style="border-radius: 5px">
+              <canvas id="Paystatus" class=""> </canvas>
+            </div>
+          </div>
         </div>
+        <input type="hidden" id="pending" value="<%= pending %>" />
+        <input type="hidden" id="completed" value="<%= completed %>" />
+        <input type="hidden" id="delivered" value="<%= delivered %>" />
+        <input type="hidden" id="cancelled" value="<%= cancelled %>" />
+        <input type="hidden" id="cod" value="<%= cod %>" />
+        <input type="hidden" id="online" value="<%= online %>" />
+      </section>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script>
+        const ctx = document.getElementById("ordersStatusChart");
+        const ctx1 = document.getElementById("Paystatus");
+        const pending = Number(document.getElementById("pending").value);
+        const completed = Number(document.getElementById("completed").value);
+        const delivered = Number(document.getElementById("delivered").value);
+        const cancelled = Number(document.getElementById("cancelled").value);
+        const cod = Number(document.getElementById("cod").value);
+        const online = Number(document.getElementById("online").value);
+        new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: ["Pending", "Delivered", "Cancelled", "Completed"],
+            datasets: [
+              {
+                label: "No .of Orders",
+                data: [pending, delivered, cancelled, completed],
+                borderWidth: 2,
+                backgroundColor: ["#BD000E" , "#BD000E", "#BD000E", "#BD000E"],
+              },
+            ],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+        new Chart(ctx1, {
+          type: "pie",
+          data: {
+            labels: ["COD", "Online"],
+            datasets: [
+              {
+                label: "No .of Orders",
+                data: [cod, online],
+                borderWidth: 2,
+                backgroundColor: ["#DCAA00", "#04891E"],
+              },
+            ],
+          },
+          options: {},
+        });
+      </script>
+        
+        
       </main>
     </div>
   </div>

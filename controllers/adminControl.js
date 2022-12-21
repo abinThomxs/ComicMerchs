@@ -6,12 +6,47 @@ const Orders = require('../models/orders');
 
 let message = '';
 
-const adminHomeRender = (req, res) => {
-  const { session } = req;
-  if (session.userid && session.accountType === 'admin') {
-    res.render('admin/adminHome');
-  } else {
-    res.redirect('/admin/login');
+// const adminHomeRender = (req, res) => {
+//   const { session } = req;
+//   if (session.userid && session.accountType === 'admin') {
+//     res.render('admin/adminHome');
+//   } else {
+//     res.redirect('/admin/login');
+//   }
+// };
+
+const adminHomeRender = async (req, res) => {
+  try {
+    // eslint-disable-next-line no-unused-vars
+    const userCount = await Users.countDocuments({});
+    const productCount = await Products.countDocuments({});
+    const orderData = await Orders.find({ orderStatus: { $ne: 'Cancelled' } });
+    const orderCount = await Orders.countDocuments({});
+    const pendingOrder = await Orders.find({ orderStatus: 'Pending' }).count();
+    const completed = await Orders.find({ orderStatus: 'Completed' }).count();
+    const delivered = await Orders.find({ orderStatus: 'Delivered' }).count();
+    const cancelled = await Orders.find({ orderStatus: 'Cancelled' }).count();
+    const cod = await Orders.find({ paymentMethod: 'cod' }).count();
+    const online = await Orders.find({ paymentMethod: 'online' }).count();
+    // eslint-disable-next-line arrow-body-style
+    const totalAmount = orderData.reduce((accumulator, object) => {
+      // eslint-disable-next-line no-return-assign, no-param-reassign
+      return (accumulator += object.totalAmount);
+    }, 0);
+    res.render('admin/adminHome', {
+      usercount: userCount,
+      productcount: productCount,
+      totalamount: totalAmount,
+      ordercount: orderCount,
+      pending: pendingOrder,
+      completed,
+      delivered,
+      cancelled,
+      cod,
+      online,
+    });
+  } catch (error) {
+    res.redirect('/500');
   }
 };
 
