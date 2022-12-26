@@ -1,10 +1,13 @@
 /* eslint-disable no-console */
 const moment = require('moment');
 // const multer = require('multer');
+// const { compareSync } = require('bcrypt');
 const Users = require('../models/signupModel');
 const Categories = require('../models/categories');
 const Products = require('../models/products');
 const Orders = require('../models/orders');
+const Banners = require('../models/banner');
+const Coupons = require('../models/coupon');
 
 let message = '';
 
@@ -219,8 +222,6 @@ const postAddProduct = async (req, res) => {
     });
     products.image = req.files.map((f) => ({ url: f.path, filename: f.filename }));
     console.log(req.files);
-    console.log('product after map', products);
-
     const productsData = await products.save();
     console.log(productsData);
     if (productsData) {
@@ -480,6 +481,107 @@ const getSalesReport = async (req, res) => {
   }
 };
 
+const getBanner = async (req, res) => {
+  try {
+    const banner = await Banners.find();
+    res.render('admin/banner', { banner });
+  } catch (error) {
+    res.redirect('/500');
+  }
+};
+
+const getAddBanner = (req, res) => {
+  res.render('admin/addBanner');
+};
+
+const postAddBanner = async (req, res) => {
+  try {
+    console.log(req.body);
+    const Banner = new Banners({
+      name: req.body.Name,
+    });
+    console.log(req.files);
+    Banner.image = req.files.map((f) => ({ url: f.path, filename: f.filename }));
+    const bannerData = await Banner.save();
+    if (bannerData) {
+      res.redirect('/admin/banner');
+    } else {
+      res.render('admin/addBanner');
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+// const getDeleteBanner = (req, res) => {
+//   try {
+//     Banners.findOneAndDelete({ _id: req.params.id })
+//       .then((result) => {
+//         const filePath = `./public/images/${result.image}`;
+//         fs.unlink(filePath, (err) => {
+//           if (err) throw err;
+//         });
+//         res.redirect('/admin/home/banner');
+//       }).catch(() => {
+//         res.redirect('/500');
+//       });
+//   } catch (error) {
+//     res.redirect('/500');
+//   }
+// };
+
+const getDeleteBanner = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(id);
+    await Banners.deleteOne({ _id: id }).then(() => {
+      res.redirect('/admin/banner');
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+const getCoupon = async (req, res) => {
+  try {
+    const coupons = await Coupons.find();
+    res.render('admin/coupon', { allData: coupons });
+  } catch (error) {
+    res.redirect('/500');
+  }
+};
+
+const addCouponRender = (req, res) => {
+  try {
+    res.render('admin/addCoupon', { message: req.flash('message') });
+  } catch (error) {
+    res.redirect('/500');
+  }
+};
+
+const addCouponPost = async (req, res) => {
+  try {
+    const { code, offer, amount } = req.body;
+    const already = await model.Coupon.find({ coupon_code: code });
+    if (already.length !== 0) {
+      req.flash('message', ['Code already exist']);
+      res.redirect('/admin/home/coupon/add');
+    } else {
+      // eslint-disable-next-line prefer-destructuring
+      const Coupon = model.Coupon;
+      const coupon = new Coupon({
+        coupon_code: code,
+        offer,
+        max_amount: amount,
+      });
+      await coupon.save();
+      res.redirect('/admin/home/coupon');
+    }
+  } catch (error) {
+    res.redirect('/500');
+  }
+};
+
 module.exports = {
   adminHomeRender,
   adminLoginRender,
@@ -504,5 +606,10 @@ module.exports = {
   orderCompeleted,
   orderCancel,
   getSalesReport,
+  getBanner,
+  getAddBanner,
+  postAddBanner,
+  getDeleteBanner,
+  getCoupon,
   logout,
 };

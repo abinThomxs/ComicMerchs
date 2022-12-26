@@ -54,6 +54,28 @@
                             <p>Tax: Rs.<%= Math.round(sum*.15) %>.00 </p>
                             <b>Total: Rs.<%= Math.round(sum*.15) + sum + 100 %> </b>
 
+                            <div class="w-100 w-md-50 align-items-center mt-3" id="apply" style="display: flex;">
+                              <lable for="">Coupon:</lable>
+                              <div class="d-flex align-items-center ms-2"
+                                style="background-color: #fff;border-radius: 10px;">
+                                <input type="text" id="coupon" name="coupon" class="form-control he"
+                                  placeholder="Coupon Code" style="outline: none; border: none;border-radius: 5px;">
+                                <button class="btn btn-sm white blue he" type="button"
+                                  onclick="cou('<%= sum %>')">Apply</button>
+                              </div>
+                            </div>
+                            <div class="d-flex w-100 align-items-center mt-3" id="applied"
+                              style="display: none !important;">
+                              <lable for="">Coupon:</lable>
+                              <div class="d-flex flex-column align-items-start p-2 ms-2" id="applied"
+                                style="border: 1px solid;">
+                                <div style="font-size: 10px;"><a href="" onclick="remove('<%= sum %>')">Remove</a></div>
+                                <h6 id="coup_code">NOW20</h6>
+                                <div> discount of &nbsp;<label for="" id="per"> 20% &nbsp;</label> upto &nbsp;Rs.<label
+                                    for="" id="amount">200</label></div>
+                              </div>
+                            </div>
+
                             <div class="payment col-md-6 mt-3 d-flex justify-content-center ms-5 px-5">
                               <h5 class="text-black">Payment:</h5>
                               <div class="p-1 col-md-8   text-dark">
@@ -156,7 +178,7 @@
                 if (result.isConfirmed) {
                   Swal.fire({
                     icon: 'success',
-                    title: 'Order Confirmed',                
+                    title: 'Order Confirmed',
                   }).then(() => {
                     $.ajax({
                       url: "/user/orderConfirmed",
@@ -177,7 +199,46 @@
               })
 
 
-
+              function cou(amount) {
+                const code = document.getElementById('coupon').value;
+                $.ajax({
+                  url: "/coupon-check",
+                  method: "post",
+                  data: {
+                    code,
+                    amount,
+                  },
+                  success: (response) => {
+                    if (response[0].success) {
+                      swal("Coupon Added!", "You got a discount of Rs." + response[0].dis, "success")
+                        .then(() => {
+                          document.getElementById('discount').innerHTML = response[0].dis;
+                          const total = Number(amount) - Number(response[0].dis);
+                          document.getElementById('total').innerHTML = total;
+                          applied(response[1].check);
+                        });
+                    } else {
+                      swal("Error", response[0].message, "error")
+                        .then(() => {
+                          location.reload()
+                        });
+                    }
+                  },
+                });
+              }
+              function applied(data) {
+                document.getElementById('coup_code').innerHTML = data.coupon_code;
+                document.getElementById('per').innerHTML = data.offer;
+                document.getElementById('amount').innerHTML = data.max_amount;
+                document.getElementById('applied').style.display = 'block';
+                document.getElementById('apply').style.display = 'none';
+              }
+              function remove(sum) {
+                document.getElementById('applied').style.display = 'none';
+                document.getElementById('apply').style.display = 'flex';
+                document.getElementById('discount').innerHTML = 0;
+                document.getElementById('total').innerHTML = sum;
+              }
 
 
 

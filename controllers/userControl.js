@@ -7,13 +7,13 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
 const crypto = require('crypto');
-const Swal = require('sweetalert2');
 const Users = require('../models/signupModel');
 // const Categories = require('../models/categories');
 const Products = require('../models/products');
 const Carts = require('../models/carts');
 const Address = require('../models/address');
 const Orders = require('../models/orders');
+const Coupons = require('../models/coupon');
 const Otp = require('../models/otp');
 const mailer = require('../middlewares/otpValidation');
 const instance = require('../middlewares/razorpay');
@@ -719,9 +719,9 @@ const getDeleteAddress = (req, res) => {
 };
 
 const couponCheck = async (req, res) => {
-  const uid = req.session.userID;
+  const uid = req.session.userid;
   const { code, amount } = req.body;
-  const check = await model.Coupon.findOne(
+  const check = await Coupons.findOne(
     { coupon_code: code },
   );
   if (check) {
@@ -935,7 +935,6 @@ const getProfile = async (req, res) => {
   const { session } = req;
   let count = 0;
   const userid = session.userid;
-  console.log(userid);
   if (session.userid && session.accountType === 'user') {
     const customer = true;
     await Carts.findOne({ user_id: req.session.userID }).then((doc) => {

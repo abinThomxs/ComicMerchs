@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('../partials/adminHeader.ejs') %>
+
+    <body>
+
+        <%- include('../partials/adminHomeNav.ejs') %>
+
+            <div class="container col-md-10 ms-sm-auto me-lg-2 me-md-2 col-lg-10 px-md-4 mt-3">
+                <table class="table align-middle" id="ptable">
+                    <thead>
+                      <tr>
+                          <th scope="col">Image</th>
+                          <th scope="col">Name</th>
+                          <th scope="col">Options</th>
+                      </tr>
+                    </thead>
+                    
+                    <tbody>
+                      <% banner.forEach( ban => {  %>
+                      <tr>
+                          <td><img class="pro-img" style="width: 300px;" src="<%= ban.image[0].url %> " alt=""></td>
+                          <td><%= ban.name %> </td>
+                          <td colspan="3">
+                            <div class="d-flex flex-column gap-1">
+                                  <a
+                                  href="/admin/deleteBanner/<%= ban._id %>"
+                                  class="btn btn-outline-danger btn-sm"
+                                  tabindex="-1"
+                                  role="button"
+                                  aria-disabled="true"
+                                  >Delete</a>
+                                </div>
+                          </td>
+                      </tr>
+                      <%})%>
+                    </tbody> 
+                  </table>
+                <table>
+                    <tbody>
+                        <td><a href="/admin/addBanner" class="btn btn-success">Add Banner</a></td>
+                    </tbody>
+                </table>
+            </div>
+           
+            <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+            <script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+            <script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+
+            <script>
+                $(document).ready(function () {
+                    $('#tableForm').DataTable();
+                });
+            </script>
+
+            <!-- Section: Design Block -->
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+                integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+                crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js"
+                integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk"
+                crossorigin="anonymous"></script>
+
+        </div>
+           
+
+    </body>
+
+</html>
