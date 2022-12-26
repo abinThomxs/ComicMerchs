@@ -206,30 +206,6 @@ const getAddProduct = async (req, res) => {
   }
 };
 
-// const postAddProduct = async (req, res) => {
-//   try {
-//     console.log(req.body);
-//     const products = new Products({
-//       productName: req.body.productName,
-//       description: req.body.description,
-//       productCategory: req.body.productCategory,
-//       stock: req.body.stock,
-//       cost: req.body.cost,
-//       soldCount: req.body.soldCount,
-//       image: req.body.image,
-//       discount: req.body.discount,
-//     });
-//     const productsData = await products.save();
-//     if (productsData) {
-//       res.redirect('/admin/products');
-//     } else {
-//       res.render('admin/addProduct');
-//     }
-//   } catch (error) {
-//     console.log(error.message);
-//   }
-// };
-
 const postAddProduct = async (req, res) => {
   try {
     const products = new Products({

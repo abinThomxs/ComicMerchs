@@ -30,13 +30,22 @@
                                                     <img src="<%= action.image[0].url %> " />
                                                 </a>
                                                 <div class="card-content">
-                                                    <h4 class="card-title">
+                                                    <h4 class="card-title text-center">
                                                         <a
                                                             href="http://www.fostrap.com/2016/03/bootstrap-3-carousel-fade-effect.html">
                                                             Rs.<%= action.cost %>
                                                         </a>
+                                                        <i class="fa-regular fa-heart px-2"></i>
+                                                        <% if(customer===true) { %>
+                                                            
+                                                            <a href="http://localhost:3000/user/addToCart/<%= action._id %>">
+                                                                <i class="fas fa-regular fa-cart-shopping px-2"></i></a>
+                                                            <% }else{ %>                                                                    
+                                                                    <a href="http://localhost:3000/user/login">
+                                                                        <i class="fas fa-regular fa-cart-shopping px-2"></i></a>
+                                                                <% } %>  
                                                     </h4>
-                                                    <p class="">
+                                                    <p class="text-center">
                                                         <%= action.productName %>
                                                     </p>
                                                 </div>

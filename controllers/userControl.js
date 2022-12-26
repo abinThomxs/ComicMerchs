@@ -7,6 +7,7 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
 const crypto = require('crypto');
+const Swal = require('sweetalert2');
 const Users = require('../models/signupModel');
 // const Categories = require('../models/categories');
 const Products = require('../models/products');
@@ -16,6 +17,7 @@ const Orders = require('../models/orders');
 const Otp = require('../models/otp');
 const mailer = require('../middlewares/otpValidation');
 const instance = require('../middlewares/razorpay');
+const Wishlists = require('../models/wishlist');
 
 let message = '';
 
@@ -30,6 +32,7 @@ const loginRender = (req, res) => {
 };
 
 const loginPost = async (req, res) => {
+  const customer = false;
   try {
     await Users.findOne({ email: req.body.email })
       .then((result) => {
@@ -42,40 +45,21 @@ const loginPost = async (req, res) => {
               res.redirect('/user/home');
             } else {
               message = 'wrong password';
-              res.render('user/login', { message });
+              res.render('user/login', { message, customer });
             }
           } else {
             message = 'You are blocked';
-            res.render('user/login', { message });
+            res.render('user/login', { message, customer });
           }
         } else {
           message = 'Register to continue';
-          res.render('user/login', { message });
+          res.render('user/login', { message, customer });
         }
       });
   } catch (error) {
     console.log(error.message);
   }
 };
-
-// const userHomeRender = async (req, res) => {
-//   const { session } = req;
-//   let count = 0;
-//   const categories = await Categories.find();
-//   const products = await Products.find();
-//   if (session.userid && session.accountType === 'user') {
-//     const userData = await Users.findOne({ _id: session.userid });
-//     const cart = await Carts.find({ userId: userData._id });
-//     if (cart.length) {
-//       count = cart[0].product.length;
-//     }
-//     const customer = true;
-//     res.render('user/userHome', { customer, categories, products, count });
-//   } else {
-//     const customer = false;
-//     res.render('user/userHome', { customer, categories, products, count });
-//   }
-// };
 
 const userHomeRender = async (req, res) => {
   const { session } = req;
@@ -428,6 +412,132 @@ const getAddToCart = async (req, res) => {
   }
 };
 
+const getWishlist = async (req, res) => {
+  try {
+    const customer = true;
+    const { session } = req;
+    const userData = mongoose.Types.ObjectId(session.userid);
+    const cartData = await Carts.findOne({ user_id: session.userid });
+    let count = cartData?.product?.length;
+    const wishlistDetails = await Wishlists.findOne({ userId: session.userid });
+    let wishCount = wishlistDetails?.product?.length;
+    if (wishlistDetails == null) {
+      wishCount = 0;
+    }
+    if (cartData == null) {
+      count = 0;
+    }
+    const wishlistData = await Wishlists.aggregate([
+      {
+        $match: { userId: userData },
+      },
+      {
+        $unwind: '$product',
+      },
+      {
+        $project: {
+          productItem: '$product.productId',
+        },
+      },
+      {
+        $lookup: {
+          from: 'products',
+          localField: 'productItem',
+          foreignField: '_id',
+          as: 'productDetail',
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          productDetail: { $arrayElemAt: ['$productDetail', 0] },
+        },
+      },
+    ]);
+    res.render(
+      'user/wishlist',
+      {
+        customer,
+        count,
+        wishlistData,
+        wishCount,
+      },
+    );
+  } catch (error) {
+    console.log(error);
+    res.redirect('/500');
+  }
+};
+
+const postAddToWishlist = async (req, res) => {
+  try {
+    const uid = req.session.userid;
+    const { pid } = req.body;
+    const proObj = {
+      productId: pid,
+    };
+    const userWishlist = await Wishlists.findOne({ userId: uid });
+    const verify = await Carts.findOne(
+      { userId: uid },
+      { product: { $elemMatch: { productId: pid } } },
+    );
+    if (verify?.product?.length) {
+      res.json({ cart: true });
+    } else {
+      // eslint-disable-next-line no-lonely-if
+      if (userWishlist) {
+        const proExist = userWishlist.product.findIndex(
+          (product) => product.productId === pid,
+        );
+        if (proExist !== -1) {
+          res.json({ productExist: true });
+        } else {
+          Wishlists
+            .updateOne({ userId: uid }, { $push: { product: proObj } })
+            .then(() => {
+              res.json({ success: true });
+              // res.redirect('/user/home');
+              console.log('added to wishlist');
+            });
+        }
+      } else {
+        Wishlists
+          .create({
+            userId: uid,
+            product: [
+              {
+                productId: pid,
+              },
+            ],
+          })
+          .then(() => {
+            res.json({ status: true });
+          });
+      }
+    }
+  } catch (error) {
+    res.redirect('/500');
+  }
+};
+
+const postDeleteWishlist = async (req, res) => {
+  try {
+    const pid = req.body.product;
+    const uid = req.session.userid;
+    console.log(pid);
+    await Wishlists
+      .updateOne(
+        { userId: uid, 'product.productId': pid },
+        { $pull: { product: { productId: pid } } },
+      )
+      .then(() => {
+        res.json({ status: true });
+      });
+  } catch (error) {
+    res.redirect('/500');
+  }
+};
+
 const cartQuantity = async (req, res, next) => {
   const data = req.body;
   data.count = Number(data.count);
@@ -605,6 +715,43 @@ const getDeleteAddress = (req, res) => {
     });
   } catch (error) {
     res.redirect('/404');
+  }
+};
+
+const couponCheck = async (req, res) => {
+  const uid = req.session.userID;
+  const { code, amount } = req.body;
+  const check = await model.Coupon.findOne(
+    { coupon_code: code },
+  );
+  if (check) {
+    let used = false;
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < check.used_user_id.length; i++) {
+      const element = check.used_user_id[i];
+      if (element === uid) {
+        used = true;
+      }
+    }
+    if (!used) {
+      let discount = 0;
+      const off = (Number(amount) * Number(check.offer)) / 100;
+      if (off > Number(check.max_amount)) {
+        discount = Number(check.max_amount);
+      } else {
+        discount = off;
+      }
+      res.json([
+        {
+          success: true, dis: discount, code,
+        },
+        { check },
+      ]);
+    } else {
+      res.json([{ success: false, message: 'Coupon already used' }]);
+    }
+  } else {
+    res.json([{ success: false, message: 'Coupon invalid' }]);
   }
 };
 
@@ -915,6 +1062,9 @@ module.exports = {
   getProductDetail,
   getCart,
   getAddToCart,
+  getWishlist,
+  postAddToWishlist,
+  postDeleteWishlist,
   getOTP,
   postOTP,
   cartQuantity,
@@ -925,6 +1075,7 @@ module.exports = {
   getEditAddress,
   postEditAddress,
   getDeleteAddress,
+  couponCheck,
   confirmOrder,
   orderSuccess,
   verifyPayment,

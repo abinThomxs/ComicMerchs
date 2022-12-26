@@ -12,11 +12,11 @@
 
 
 
-                <section class="wrapper">
-                    <div class="container-fostrap mt-5 pt-5">
+                <section class="wrapper justify-content-center">
+                   
                         <div class=" my-5">
                             <div class="d-flex justify-content-center">
-                                <h1 class="heading my-5">
+                                <h1 class="heading my-5 mx-3">
                                     Choose your Merch
                                 </h1>
                                 <form action="/user/store" method="post">
@@ -36,25 +36,34 @@
                             </h4>
                         </div>
 
-                        <div class="content">
-                            <div class="container">
+                        
+                            <div class="container ">
                                 <div class="row justify-content-center">
                                     <% products.forEach( product=> { %>
 
-                                        <div class="card col-xs-8 col-lg-3 my-5  me-lg-5">
+                                        <div class="card col-10 col-lg-3 my-5 mx-4">
 
                                             <a class="img-card"
                                                 href="http://localhost:3000/user/productDetail/<%= product._id %>">
                                                 <img src="<%= product.image[0].url %> " />
                                             </a>
-                                            <div class="card-content">
+                                            <div class="card-content text-center">
                                                 <h4 class="card-title">
                                                     <a
                                                         href="#">
                                                         Rs.<%= product.cost %>
                                                     </a>
+                                                    <i class="fa-regular fa-heart px-2"></i>
+                                                    <% if(customer===true) { %>
+                                                            
+                                                        <a href="http://localhost:3000/user/addToCart/<%= product._id %>">
+                                                            <i class="fas fa-regular fa-cart-shopping px-2"></i></a>
+                                                        <% }else{ %>                                                                    
+                                                                <a href="http://localhost:3000/user/login">
+                                                                    <i class="fas fa-regular fa-cart-shopping px-2"></i></a>
+                                                            <% } %>  
                                                 </h4>
-                                                <p class="">
+                                                <p class="text-center">
                                                     <%= product.productName %>
                                                 </p>
                                                 <p class="">
@@ -74,15 +83,17 @@
                                           
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        
+                            <%- include('../partials/pagination.ejs') %>
+
+
+                            <%- include('../partials/footer.ejs') %>
                 </section>
 
+                
 
-                <%- include('../partials/pagination.ejs') %>
 
-
-                    <%- include('../partials/footer.ejs') %>
+               
 
                         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
                             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"

@@ -58,13 +58,25 @@
                                                     <img src="<%= product.image[0].url %> " />
                                                 </a>
                                                 <div class="card-content">
-                                                    <h4 class="card-title">
-                                                        <a
-                                                            href="">                                                            
+                                                    <h4 class="card-title text-center">
+                                                        <a href="">
                                                             Rs.<%= product.cost %>
                                                         </a>
+                                                        <% if(customer===true) { %>
+                                                            <a
+                                                                href="http://localhost:3000/user/addToWishlist/<%= product._id %>">
+                                                                <i id="wish" class="fa-regular fa-heart px-2"></i></a>
+                                                            <a
+                                                                href="http://localhost:3000/user/addToCart/<%= product._id %>">
+                                                                <i class="fas fa-regular fa-cart-shopping px-2"></i></a>
+                                                            <% }else{ %>
+                                                                <a href="http://localhost:3000/user/login">
+                                                                    <i
+                                                                        class="fas fa-regular fa-cart-shopping px-2"></i><i
+                                                                        class="fa-regular fa-heart px-2"></i></a>
+                                                                <% } %>
                                                     </h4>
-                                                    <p class="">
+                                                    <p class="text-center">
                                                         <%= product.productName %>
                                                     </p>
                                                 </div>
@@ -107,14 +119,26 @@
                                                     <img src="<%= discount.image[0].url %> " />
                                                 </a>
                                                 <div class="card-content">
-                                                    <h4 class="card-title">
-                                                        <a
-                                                            href="">
+                                                    <h4 class="card-title text-center">
+                                                        <a href="">
                                                             <del class="text-primary">Rs.<%= (discount.cost)*2 %></del>
                                                             Rs.<%= discount.cost %>
                                                         </a>
+                                                        <% if(customer===true) { %>
+                                                            <a onclick="sweet('<%= discount._id %>')">
+                                                                <i id="wish" class="fa-regular fa-heart px-2"
+                                                                    ></i></a>
+                                                            <a
+                                                                href="http://localhost:3000/user/addToCart/<%= discount._id %>">
+                                                                <i class="fas fa-regular fa-cart-shopping px-2"></i></a>
+                                                            <% }else{ %>
+                                                                <a href="http://localhost:3000/user/login">
+                                                                    <i
+                                                                        class="fas fa-regular fa-cart-shopping px-2"></i><i
+                                                                        class="fa-regular fa-heart px-2"></i></a>
+                                                                <% } %>
                                                     </h4>
-                                                    <p class="">
+                                                    <p class="text-center">
                                                         <%= discount.productName %>
                                                     </p>
                                                 </div>
@@ -138,6 +162,36 @@
 
 
                 <%- include('../partials/footer.ejs') %>
+                    <!-- <script>
+                        function sweet() {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Added to Wishlist',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        };
+                    </script> -->
+                    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>                    
+                    <script>
+                        function sweet(pid) {
+                            $.ajax({
+                                url: "/user/addToWishlist",
+                                data: {
+                                    pid,
+                                },
+                                method: "post",
+                                success: () => {
+                                    swal("Product Added", "Product added to your wishlist", "success")
+                                        .then(() => {
+                                            location.reload();
+                                        });
+                                },
+                            });
+                        }
+                    </script>
 
                     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
                         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
