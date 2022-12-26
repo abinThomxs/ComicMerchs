@@ -551,32 +551,46 @@ const getCoupon = async (req, res) => {
   }
 };
 
-const addCouponRender = (req, res) => {
+const getAddCoupon = (req, res) => {
   try {
     res.render('admin/addCoupon', { message: req.flash('message') });
   } catch (error) {
+    console.log(error);
     res.redirect('/500');
   }
 };
 
-const addCouponPost = async (req, res) => {
+const postAddCoupon = async (req, res) => {
   try {
     const { code, offer, amount } = req.body;
-    const already = await model.Coupon.find({ coupon_code: code });
+    const already = await Coupons.find({ coupon_code: code });
     if (already.length !== 0) {
       req.flash('message', ['Code already exist']);
-      res.redirect('/admin/home/coupon/add');
+      res.redirect('/admin/addCoupon');
     } else {
       // eslint-disable-next-line prefer-destructuring
-      const Coupon = model.Coupon;
+      const Coupon = Coupons;
       const coupon = new Coupon({
         coupon_code: code,
         offer,
         max_amount: amount,
       });
       await coupon.save();
-      res.redirect('/admin/home/coupon');
+      res.redirect('/admin/coupon');
     }
+  } catch (error) {
+    res.redirect('/500');
+  }
+};
+
+const getDeleteCoupon = (req, res) => {
+  try {
+    Coupons.findOneAndDelete({ _id: req.params.id })
+      .then(() => {
+        res.redirect('/admin/coupon');
+      }).catch(() => {
+        res.redirect('/500');
+      });
   } catch (error) {
     res.redirect('/500');
   }
@@ -611,5 +625,8 @@ module.exports = {
   postAddBanner,
   getDeleteBanner,
   getCoupon,
+  getAddCoupon,
+  postAddCoupon,
+  getDeleteCoupon,
   logout,
 };

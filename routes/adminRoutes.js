@@ -36,6 +36,11 @@ router.get('/addBanner', session.adminSession, controller.getAddBanner);
 router.post('/addBanner', upload.array('image', 1), session.adminSession, controller.postAddBanner);
 router.get('/deleteBanner/:id', session.adminSession, controller.getDeleteBanner);
 
+router.get('/coupon', session.adminSession, controller.getCoupon);
+router.get('/addCoupon', session.adminSession, controller.getAddCoupon);
+router.post('/addCoupon', session.adminSession, controller.postAddCoupon);
+router.get('/deleteCoupon/:id', session.adminSession, controller.getDeleteCoupon);
+
 router.get('/orders', session.adminSession, controller.getOrders);
 router.post('/changeStatus', session.adminSession, controller.changeOrderStatus);
 router.post('/orderCompleted', session.adminSession, controller.orderCompeleted);

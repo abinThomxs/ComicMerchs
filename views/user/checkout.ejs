@@ -70,8 +70,8 @@
                               <div class="d-flex flex-column align-items-start p-2 ms-2" id="applied"
                                 style="border: 1px solid;">
                                 <div style="font-size: 10px;"><a href="" onclick="remove('<%= sum %>')">Remove</a></div>
-                                <h6 id="coup_code">NOW20</h6>
-                                <div> discount of &nbsp;<label for="" id="per"> 20% &nbsp;</label> upto &nbsp;Rs.<label
+                                <h6 id="coup_code">welcome50</h6>
+                                <div> discount of &nbsp;<label for="" id="per"> 50% &nbsp;</label> upto &nbsp;Rs.<label
                                     for="" id="amount">200</label></div>
                               </div>
                             </div>
@@ -202,7 +202,7 @@
               function cou(amount) {
                 const code = document.getElementById('coupon').value;
                 $.ajax({
-                  url: "/coupon-check",
+                  url: "/couponCheck",
                   method: "post",
                   data: {
                     code,

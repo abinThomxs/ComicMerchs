@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('../partials/adminHeader.ejs') %>
+
+    <body>
+
+        <%- include('../partials/adminHomeNav.ejs') %>
+
+            <div class="container col-md-10 ms-sm-auto me-lg-2 me-md-2 col-lg-10 px-md-4 mt-3">
+                <h3 class="i-names">Products</h3>
+                <div class="table-top container mb-5">
+                    <div>
+                      <a href="/admin/addCoupon" class="btn btn-outline-success" role="button" aria-disabled="true">Add</a>
+                    </div>
+                </div>
+                <table class="table align-middle" id="ptable">
+                    <thead>
+                      <tr>
+                          <th scope="col">Coupon</th>
+                          <th scope="col">Offer (in %)</th>
+                          <th scope="col">Max Amount (in Rs.)</th>                       
+                          
+                      </tr>
+                    </thead>
+                    
+                    <tbody>
+                      <% allData.forEach(data =>{  %>
+                      <tr <% if(data.coupon_status === 'Deactivated'){ %> 
+                        class="table-danger"
+                         <% } %> >
+                          <td><%= data.coupon_code %></td>
+                          <td><%= data.offer %></td>
+                          <td><%= data.max_amount %></td>                          
+                          <td colspan="3">
+                            <div class="d-flex flex-column gap-1">                          
+                              <a
+                                  href="/admin/deleteCoupon/<%= data._id %>"
+                                  class="btn btn-outline-danger btn-sm"
+                                  tabindex="-1"
+                                  role="button"
+                                  aria-disabled="true"
+                                  >Delete</a>                                  
+                                </div>
+                          </td>
+                      </tr>
+                      <%})%>
+                    </tbody> 
+                  </table>
+            </div>
+           
+            <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+            <script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+            <script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+
+            <script>
+                $(document).ready(function () {
+                    $('#tableForm').DataTable();
+                });
+            </script>
+
+            <!-- Section: Design Block -->
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+                integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+                crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js"
+                integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk"
+                crossorigin="anonymous"></script>
+
+        </div>
+           
+
+    </body>
+
+</html>

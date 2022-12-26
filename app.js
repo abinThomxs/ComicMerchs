@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser');
 const sessions = require('express-session');
 const path = require('path');
 const dotenv = require('dotenv');
+const flash = require('connect-flash');
 
 const app = express();
 dotenv.config();
@@ -23,6 +24,7 @@ mongoose.connect(url, {
   }
 });
 
+app.use(flash());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
