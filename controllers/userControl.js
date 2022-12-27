@@ -720,6 +720,7 @@ const getDeleteAddress = (req, res) => {
 
 const couponCheck = async (req, res) => {
   const uid = req.session.userid;
+  console.log('entered into couponcheck');
   const { code, amount } = req.body;
   const check = await Coupons.findOne(
     { coupon_code: code },
@@ -755,13 +756,20 @@ const couponCheck = async (req, res) => {
   }
 };
 
-const confirmOrder = (req, res) => {
+const confirmOrder = async (req, res) => {
   const uid = mongoose.Types.ObjectId(req.session.userid);
   const paymethod = req.body.pay;
   const adrs = req.body.address;
-  // const { Order } = Orders;
-  // eslint-disable-next-line no-unused-vars
-  Users.findOne({ user_id: uid }).then((userData) => {
+  const coupon = await Coupons.findOne({ coupon_code: req.body.coupon });
+  if (coupon) {
+    await Coupons.updateOne(
+      { coupon_code: req.body.coupon },
+      {
+        $push: { used_user_id: uid },
+      },
+    );
+  }
+  Users.findOne({ user_id: uid }).then(() => {
     Carts.aggregate([
       {
         $match: { userId: uid },
@@ -799,11 +807,9 @@ const confirmOrder = (req, res) => {
       },
     ])
       .then((result) => {
-        console.log('required', result);
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < result.length; i++) {
           const sold = result[i].productDetail.soldCount + result[i].productQuantity;
-          console.log('total sold =', sold);
           Products.updateMany(
             // eslint-disable-next-line no-underscore-dangle
             { _id: result[i].productDetail._id },
@@ -813,9 +819,19 @@ const confirmOrder = (req, res) => {
             console.log(err);
           });
         }
-        // const count = result.length;
+        let dis = 0;
+        let lastTotal = 0;
         const sum = result
           .reduce((accumulator, object) => accumulator + object.productPrice, 0);
+        if (coupon) {
+          dis = (Number(sum) * Number(coupon.offer)) / 100;
+          if (dis > Number(coupon.max_amount)) {
+            dis = Number(coupon.max_amount);
+          }
+          lastTotal = sum - dis;
+        } else {
+          lastTotal = sum;
+        }
         Carts.findOne({ userId: uid }).then((cartData) => {
           const order = new Orders({
             order_id: Date.now(),
@@ -824,8 +840,9 @@ const confirmOrder = (req, res) => {
             address: adrs,
             order_placed_on: moment().format('DD-MM-YYYY'),
             products: cartData.product,
-            totalAmount: sum,
-            finalAmount: Math.round(sum + (sum * 0.15) + 100),
+            discount: dis,
+            totalAmount: lastTotal,
+            finalAmount: Math.round(lastTotal + (lastTotal * 0.15) + 100),
             paymentMethod: paymethod,
             expectedDelivery: moment().add(4, 'days').format('MMM Do YY'),
           });
@@ -835,10 +852,8 @@ const confirmOrder = (req, res) => {
             const oid = done._id;
             Carts.deleteOne({ user_id: uid }).then(() => {
               if (paymethod === 'cod') {
-                console.log('payment is cod');
                 res.json([{ success: true, oid }]);
               } else if (paymethod === 'online') {
-                console.log('payment is online');
                 // const amount = done.totalAmount * 100;
                 const amount = done.finalAmount * 100;
                 const options = {
@@ -988,62 +1003,58 @@ const postChangePasswod = (req, res) => {
 };
 
 const getOrders = async (req, res) => {
-  try {
-    const customer = true;
-    const name = req.session.firstName;
-    const uid = req.session.userid;
-    await Orders.aggregate([
-      {
-        $match: { user_id: uid },
+  const customer = true;
+  const name = req.session.firstName;
+  const uid = req.session.userid;
+  const uidobj = mongoose.Types.ObjectId(uid);
+  await Orders.aggregate([
+    {
+      $match: { user_id: uidobj },
+    },
+    {
+      $unwind: '$products',
+    },
+    {
+      $project: {
+        productItem: '$products.productId',
+        productQuantity: '$products.quantity',
+        order_id: 1,
+        address: 1,
+        expectedDelivery: 1,
+        finalAmount: 1,
+        paymentMethod: 1,
+        paymentStatus: 1,
+        orderStatus: 1,
+        createdAt: 1,
       },
-      {
-        $unwind: '$products',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'productItem',
+        foreignField: '_id',
+        as: 'productDetail',
       },
-      {
-        $project: {
-          productItem: '$products.productId',
-          productQuantity: '$products.quantity',
-          order_id: 1,
-          address: 1,
-          expectedDelivery: 1,
-          finalAmount: 1,
-          paymentMethod: 1,
-          paymentStatus: 1,
-          orderStatus: 1,
-          createdAt: 1,
+    },
+    {
+      $unwind: '$productDetail',
+    },
+    {
+      $addFields: {
+        productPrice: {
+          $sum: { $multiply: ['$productQuantity', '$productDetail.price'] },
         },
       },
-      {
-        $lookup: {
-          from: 'products',
-          localField: 'productItem',
-          foreignField: '_id',
-          as: 'productDetail',
-        },
-      },
-      {
-        $unwind: '$productDetail',
-      },
-      {
-        $addFields: {
-          productPrice: {
-            $sum: { $multiply: ['$productQuantity', '$productDetail.price'] },
-          },
-        },
-      },
-    ]).then((result) => {
-      // eslint-disable-next-line no-underscore-dangle
-      Orders.find({ user_id: uid }).then((doc) => {
-        res.render('user/orders', {
-          name, customer, count: 0, productData: result, allData: doc, items: 0,
-        });
+    },
+  ]).then((result) => {
+    // eslint-disable-next-line no-underscore-dangle
+    console.log('helo', result);
+    Orders.find({ user_id: uid }).then((doc) => {
+      res.render('user/orders', {
+        name, customer, count: 0, productData: result, allData: doc, items: 0,
       });
-    }).catch(() => {
-      res.redirect('/500');
     });
-  } catch (error) {
-    res.redirect('/500');
-  }
+  });
 };
 
 module.exports = {

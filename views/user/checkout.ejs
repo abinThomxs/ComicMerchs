@@ -60,8 +60,8 @@
                                 style="background-color: #fff;border-radius: 10px;">
                                 <input type="text" id="coupon" name="coupon" class="form-control he"
                                   placeholder="Coupon Code" style="outline: none; border: none;border-radius: 5px;">
-                                <button class="btn btn-sm white blue he" type="button"
-                                  onclick="cou('<%= sum %>')">Apply</button>
+                                <button class="btn btn-sm white blue he" type="button" value="button"
+                                  onclick="coup('<%= sum %>')">Apply</button>
                               </div>
                             </div>
                             <div class="d-flex w-100 align-items-center mt-3" id="applied"
@@ -75,6 +75,8 @@
                                     for="" id="amount">200</label></div>
                               </div>
                             </div>
+
+                            <!--  -->
 
                             <div class="payment col-md-6 mt-3 d-flex justify-content-center ms-5 px-5">
                               <h5 class="text-black">Payment:</h5>
@@ -154,7 +156,6 @@
 
         <%- include('../partials/footer.ejs') %>
 
-          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 
           <script src="/js/user/main.js"></script>
 
@@ -163,6 +164,8 @@
             crossorigin="anonymous"></script>
 
           <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+          <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
           <script>
             $("#checkout").submit((e) => {
               e.preventDefault();
@@ -197,52 +200,53 @@
                   })
                 }
               })
-
-
-              function cou(amount) {
-                const code = document.getElementById('coupon').value;
-                $.ajax({
-                  url: "/couponCheck",
-                  method: "post",
-                  data: {
-                    code,
-                    amount,
-                  },
-                  success: (response) => {
-                    if (response[0].success) {
-                      swal("Coupon Added!", "You got a discount of Rs." + response[0].dis, "success")
-                        .then(() => {
-                          document.getElementById('discount').innerHTML = response[0].dis;
-                          const total = Number(amount) - Number(response[0].dis);
-                          document.getElementById('total').innerHTML = total;
-                          applied(response[1].check);
-                        });
-                    } else {
-                      swal("Error", response[0].message, "error")
-                        .then(() => {
-                          location.reload()
-                        });
-                    }
-                  },
-                });
-              }
-              function applied(data) {
-                document.getElementById('coup_code').innerHTML = data.coupon_code;
-                document.getElementById('per').innerHTML = data.offer;
-                document.getElementById('amount').innerHTML = data.max_amount;
-                document.getElementById('applied').style.display = 'block';
-                document.getElementById('apply').style.display = 'none';
-              }
-              function remove(sum) {
-                document.getElementById('applied').style.display = 'none';
-                document.getElementById('apply').style.display = 'flex';
-                document.getElementById('discount').innerHTML = 0;
-                document.getElementById('total').innerHTML = sum;
-              }
-
-
-
             });
+
+            function coup(amount) {
+              console.log('entered into ajax');
+              const code = document.getElementById('coupon').value;
+              $.ajax({
+                url: "/user/couponCheck",
+                method: "post",
+                data: {
+                  code,
+                  amount,
+                },
+                success: (response) => {
+                  if (response[0].success) {
+                    swal("Coupon Added!", "You got a discount of Rs." + response[0].dis, "success")
+                      .then(() => {
+                        document.getElementById('discount').innerHTML = response[0].dis;
+                        const total = Number(amount) - Number(response[0].dis);
+                        document.getElementById('total').innerHTML = total;
+                        applied(response[1].check);
+                      });
+                  } else {
+                    swal("Error", response[0].message, "error")
+                      .then(() => {
+                        location.reload()
+                      });
+                  }
+                },
+              });
+            }
+            function applied(data) {
+              document.getElementById('coup_code').innerHTML = data.coupon_code;
+              document.getElementById('per').innerHTML = data.offer;
+              document.getElementById('amount').innerHTML = data.max_amount;
+              document.getElementById('applied').style.display = 'block';
+              document.getElementById('apply').style.display = 'none';
+            }
+            function remove(sum) {
+              document.getElementById('applied').style.display = 'none';
+              document.getElementById('apply').style.display = 'flex';
+              document.getElementById('discount').innerHTML = 0;
+              document.getElementById('total').innerHTML = sum;
+            }
+
+
+
+
             function razorPay(order) {
               var options = {
                 key: "rzp_test_Qz0gX7o4vKhyTg", // Enter the Key ID generated from the Dashboard
