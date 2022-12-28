@@ -418,7 +418,7 @@ const getWishlist = async (req, res) => {
     const { session } = req;
     const userData = mongoose.Types.ObjectId(session.userid);
     const cartData = await Carts.findOne({ user_id: session.userid });
-    let count = cartData?.product?.length;
+    let count = await cartData?.product?.length;
     const wishlistDetails = await Wishlists.findOne({ userId: session.userid });
     let wishCount = wishlistDetails?.product?.length;
     if (wishlistDetails == null) {
