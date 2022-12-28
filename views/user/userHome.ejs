@@ -68,9 +68,9 @@
                                                             Rs.<%= product.cost %>
                                                         </a>
                                                         <% if(customer===true) { %>
-                                                            <a
-                                                                href="/addToWishlist/<%= product._id %>">
-                                                                <i id="wish" class="fa-regular fa-heart px-2"></i></a>
+                                                            <a onclick="sweet('<%= product._id %>')">
+                                                                <i id="wish" class="fa-regular fa-heart px-2"
+                                                                    ></i></a>
                                                             <a
                                                                 href="/addToCart/<%= product._id %>">
                                                                 <i class="fas fa-regular fa-cart-shopping px-2"></i></a>
@@ -80,6 +80,7 @@
                                                                         class="fas fa-regular fa-cart-shopping px-2"></i><i
                                                                         class="fa-regular fa-heart px-2"></i></a>
                                                                 <% } %>
+                                                       
                                                     </h4>
                                                     <p class="text-center">
                                                         <%= product.productName %>
