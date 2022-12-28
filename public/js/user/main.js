@@ -6,7 +6,7 @@
 /* eslint-disable no-undef */
 function changeQuantity(cartId, productId, count) {
   $.ajax({
-    url: '/user/cartQuantity',
+    url: '/cartQuantity',
     data: {
       cart: cartId,
       product: productId,
@@ -26,7 +26,7 @@ function changeQuantity(cartId, productId, count) {
 
 function deleteProduct(cartId, productId) {
   $.ajax({
-    url: '/user/deleteProduct',
+    url: '/deleteProduct',
     data: {
       cart: cartId,
       product: productId,

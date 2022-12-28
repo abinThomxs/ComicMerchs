@@ -18,6 +18,7 @@ const Otp = require('../models/otp');
 const mailer = require('../middlewares/otpValidation');
 const instance = require('../middlewares/razorpay');
 const Wishlists = require('../models/wishlist');
+const Banners = require('../models/banner');
 
 let message = '';
 
@@ -65,6 +66,7 @@ const userHomeRender = async (req, res) => {
   const { session } = req;
   let count = 0;
 
+  const banners = await Banners.find();
   const products = await Products.find().sort({ soldCount: -1 }).limit(6);
   const discounts = await Products.find({ discount: true });
   if (session.userid && session.accountType === 'user') {
@@ -74,10 +76,10 @@ const userHomeRender = async (req, res) => {
       count = cart[0].product.length;
     }
     const customer = true;
-    res.render('user/userHome', { customer, products, count, discounts });
+    res.render('user/userHome', { customer, products, count, discounts, banners });
   } else {
     const customer = false;
-    res.render('user/userHome', { customer, products, count, discounts });
+    res.render('user/userHome', { customer, products, count, discounts, banners });
   }
 };
 
@@ -385,7 +387,7 @@ const getAddToCart = async (req, res) => {
           { userId: userData._id, 'product.productId': objId },
           { $inc: { 'product.$.quantity': 1 } },
         );
-        res.redirect(`/user/productDetail/${id}`);
+        res.redirect(`/productDetail/${id}`);
       } else {
         Carts
           .updateOne({ userId: userData._id }, { $push: { product: proObj } })
@@ -986,7 +988,7 @@ const postChangePasswod = (req, res) => {
           res.render('user/changePassword', { message: 'old password and new pasword is same' });
         } else {
           Users.findOneAndUpdate({ user_id: uid }, { password }).then(() => {
-            res.redirect('/user/profile');
+            res.redirect('/profile');
           }).catch(() => {
             res.redirect('/404');
           });
