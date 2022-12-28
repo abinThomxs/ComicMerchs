@@ -244,10 +244,10 @@ const getActionFigures = async (req, res) => {
       count = cart[0].product.length;
     }
     const customer = true;
-    res.render('user/actionFigures', { customer, actionFig, count });
+    res.render('user/actionFIgures', { customer, actionFig, count });
   } else {
     const customer = false;
-    res.render('user/actionFigures', { customer, actionFig, count });
+    res.render('user/actionFIgures', { customer, actionFig, count });
   }
 };
 
