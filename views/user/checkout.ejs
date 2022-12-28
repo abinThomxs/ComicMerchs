@@ -120,7 +120,7 @@
                                 <% }) %>
 
                                   <div class="mt-3 d-flex align-items-center d9">
-                                    <a href="/user/addAddress" class="btn btn-light">+ Add New Address</a>
+                                    <a href="/addAddress" class="btn btn-light">+ Add New Address</a>
                                   </div>
 
                             </div>
@@ -139,7 +139,7 @@
                   <button type="submit" class="btn btn-primary btn-lg w-100 mt-2">
                     Confirm Order
                   </button>
-                  <a href="/user/cart" class="btn btn-primary btn-lg w-100 mt-2">
+                  <a href="/cart" class="btn btn-primary btn-lg w-100 mt-2">
                     Go Back
                   </a>
                 </div>
@@ -184,7 +184,7 @@
                     title: 'Order Confirmed',
                   }).then(() => {
                     $.ajax({
-                      url: "/user/orderConfirmed",
+                      url: "/orderConfirmed",
                       method: "post",
                       data: $("#checkout").serialize(),
                       success: (response) => {
@@ -206,7 +206,7 @@
               console.log('entered into ajax');
               const code = document.getElementById('coupon').value;
               $.ajax({
-                url: "/user/couponCheck",
+                url: "/couponCheck",
                 method: "post",
                 data: {
                   code,
@@ -280,7 +280,7 @@
             function verifyPayment(payment, order) {
               console.log('order is', order);
               $.ajax({
-                url: "/user/verifyPayment",
+                url: "/verifyPayment",
                 data: {
                   payment,
                   order,
@@ -289,12 +289,12 @@
                 success: (response) => {
 
                   if (response.success) {
-                    location.href = '/user/orderSuccess';
+                    location.href = '/orderSuccess';
 
                     // location.href = '/user/orderSuccess';
                     console.log('payment success');
                   } else {
-                    location.href = "/user/paymentFail";
+                    location.href = "/paymentFail";
                     console.log('payment failed');
                   }
                 },

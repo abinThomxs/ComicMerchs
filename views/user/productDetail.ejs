@@ -53,7 +53,7 @@
                                         <div class="card-content ">
                                             <h4 class="card-title">
                                                 <a class="text-danger"
-                                                    href="http://www.fostrap.com/2016/03/bootstrap-3-carousel-fade-effect.html">
+                                                    href="#">
                                                     <%= products.productName %>
                                                 </a>
                                             </h4>
@@ -80,13 +80,13 @@
                                                         </button> -->
                                             <% if(session) { %>
                                                 <div class="d-flex">
-                                                    <a href="http://localhost:3000/user/addToCart/<%= products._id %>">
+                                                    <a href="/addToCart/<%= products._id %>">
                                                         <button id="cartButton" class="btn btn-outline-dark mt-auto">Add
                                                             to
                                                             Cart</button></a>
                                                     <% }else{ %>
                                                         <div class="d-flex">
-                                                            <a href="http://localhost:3000/user/login"><button
+                                                            <a href="/login"><button
                                                                     class="btn btn-outline-dark mt-auto"
                                                                     id="addToCart">Add
                                                                     to Cart</button></a>

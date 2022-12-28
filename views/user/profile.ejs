@@ -55,13 +55,13 @@
                                                             <tr>
                                                                 <th>Password:</th>
                                                                 <td>
-                                                                    <a href="/user/changePassword"
+                                                                    <a href="/changePassword"
                                                                         class="btn btn-success btn-sm">Change
                                                                         Password</a>
                                                                 </td>
                                                             </tr>
                                                         </table>
-                                                        <a href="/user/orders" class="btn btn-primary btn-sm">My
+                                                        <a href="/orders" class="btn btn-primary btn-sm">My
                                                             Orders</a>
                                                     </div>
                                                 </div>
@@ -79,14 +79,14 @@
                                                                 <%= addrs.city %>,<%= addrs.state %>, <br />
                                                                         <%= addrs.pincode %>
                                                                             <br />
-                                                                            <a href="/user/editAddress/<%= addrs._id %>"
+                                                                            <a href="/editAddress/<%= addrs._id %>"
                                                                                 class="btn btn-sm btn-success">Edit</a>
-                                                                            <a href="/user/deleteAddress/<%= addrs._id %>"
+                                                                            <a href="/deleteAddress/<%= addrs._id %>"
                                                                                 class="btn btn-sm btn-danger">Delete</a>
                                                         </address>
                                                         <% }) %>
                                                             <% if (address.length <=1) { %>
-                                                                <a href="/user/addAddress"
+                                                                <a href="/addAddress"
                                                                     class="btn btn-sm btn-success">+ Add
                                                                     address</a>
                                                                 <% } %>

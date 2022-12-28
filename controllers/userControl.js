@@ -25,7 +25,7 @@ const loginRender = (req, res) => {
   const session = req.session;
   const customer = false;
   if (session.userid) {
-    res.redirect('/user/home');
+    res.redirect('/home');
   }
   res.render('user/login', { message, customer });
   message = '';
@@ -42,7 +42,7 @@ const loginPost = async (req, res) => {
               const { session } = req;
               session.accountType = 'user';
               session.userid = result._id;
-              res.redirect('/user/home');
+              res.redirect('/home');
             } else {
               message = 'wrong password';
               res.render('user/login', { message, customer });
@@ -126,7 +126,7 @@ const signupPost = async (req, res) => {
             userId: user.id,
             otp: OTP,
           });
-          res.redirect(`/user/otp?email=${user.email}`);
+          res.redirect(`/otp?email=${user.email}`);
         }
       });
     }
@@ -151,9 +151,9 @@ const postOTP = async (req, res) => {
   console.log('verify   =', verify);
   if (req.body.otp == verify.otp) {
     await Users.updateOne({ _id: req.body.userId }, { isBlock: false });
-    res.redirect('/user/login');
+    res.redirect('/login');
   } else {
-    res.redirect('/user/otp');
+    res.redirect('/otp');
   }
 };
 
@@ -390,7 +390,7 @@ const getAddToCart = async (req, res) => {
         Carts
           .updateOne({ userId: userData._id }, { $push: { product: proObj } })
           .then(() => {
-            res.redirect(`/user/productDetail/${id}`);
+            res.redirect(`/productDetail/${id}`);
           });
       }
     } else {
@@ -418,7 +418,7 @@ const getWishlist = async (req, res) => {
     const { session } = req;
     const userData = mongoose.Types.ObjectId(session.userid);
     const cartData = await Carts.findOne({ user_id: session.userid });
-    let count = await cartData?.product?.length;
+    let count = cartData?.product?.length;
     const wishlistDetails = await Wishlists.findOne({ userId: session.userid });
     let wishCount = wishlistDetails?.product?.length;
     if (wishlistDetails == null) {
@@ -579,7 +579,7 @@ const postDeleteProduct = (req, res) => {
     { $pull: { product: { productId: pid } } },
   ).then(() => {
     // console.log(cart);
-    res.redirect('/user/cart');
+    res.redirect('/cart');
   }).catch((error) => {
     console.log(error);
   });
@@ -642,7 +642,7 @@ const getaddAddress = (req, res) => {
   if (session.userid && session.accountType === 'user') {
     res.render('user/addAddress');
   } else {
-    res.redirect('/user/login');
+    res.redirect('/login');
   }
 };
 
@@ -660,7 +660,7 @@ const postaddAddress = async (req, res) => {
   });
   await addressDetails.save().then((results) => {
     if (results) {
-      res.redirect('/user/checkout');
+      res.redirect('/checkout');
     } else {
       res.json({ status: false });
     }
@@ -674,10 +674,10 @@ const getEditAddress = (req, res) => {
     Address.findOne({ _id: aid }).then((doc) => {
       res.render('user/editAddress', { doc });
     }).catch(() => {
-      res.redirect('/user/profile');
+      res.redirect('/profile');
     });
   } catch (error) {
-    res.redirect('/user/profile');
+    res.redirect('/profile');
   }
 };
 
@@ -696,7 +696,7 @@ const postEditAddress = (req, res) => {
         address, state, city, pincode,
       },
     ).then(() => {
-      res.redirect('/user/profile');
+      res.redirect('/profile');
     }).catch(() => {
       res.redirect('/404');
     });
@@ -709,7 +709,7 @@ const getDeleteAddress = (req, res) => {
   try {
     const { id } = req.params;
     Address.findByIdAndDelete({ _id: id }).then(() => {
-      res.redirect('/user/profile');
+      res.redirect('/profile');
     }).catch(() => {
       res.redirect('/404');
     });

@@ -44,7 +44,7 @@
                                         <div class="card col-10 col-lg-3 my-5 mx-4">
 
                                             <a class="img-card"
-                                                href="http://localhost:3000/user/productDetail/<%= product._id %>">
+                                                href="/productDetail/<%= product._id %>">
                                                 <img src="<%= product.image[0].url %> " />
                                             </a>
                                             <div class="card-content text-center">
@@ -56,10 +56,10 @@
                                                     <i class="fa-regular fa-heart px-2"></i>
                                                     <% if(customer===true) { %>
                                                             
-                                                        <a href="http://localhost:3000/user/addToCart/<%= product._id %>">
+                                                        <a href="/addToCart/<%= product._id %>">
                                                             <i class="fas fa-regular fa-cart-shopping px-2"></i></a>
                                                         <% }else{ %>                                                                    
-                                                                <a href="http://localhost:3000/user/login">
+                                                                <a href="/login">
                                                                     <i class="fas fa-regular fa-cart-shopping px-2"></i></a>
                                                             <% } %>  
                                                 </h4>
@@ -71,7 +71,7 @@
                                                 </p>
                                             </div>
                                             <div class="card-read-more">
-                                                <a href="http://localhost:3000/user/productDetail/<%= product._id %>"
+                                                <a href="/productDetail/<%= product._id %>"
                                                     class="btn btn-link btn-block">
                                                     View Details
                                                 </a>

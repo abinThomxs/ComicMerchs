@@ -26,22 +26,22 @@
                                             <div class="card col-xs-12 col-sm-3 mx-4 my-5 ">
 
                                                 <a class="img-card"
-                                                    href="http://www.fostrap.com/2016/03/bootstrap-3-carousel-fade-effect.html">
+                                                    href="#">
                                                     <img src="<%= cloth.image[0].url %> " />
                                                 </a>
                                                 <div class="card-content">
                                                     <h4 class="card-title text-center">
                                                         <a
-                                                            href="http://www.fostrap.com/2016/03/bootstrap-3-carousel-fade-effect.html">
+                                                            href="#">
                                                             Rs.<%= cloth.cost %>
                                                         </a>
                                                         <i class="fa-regular fa-heart px-2"></i>
                                                         <% if(customer===true) { %>
                                                             
-                                                            <a href="http://localhost:3000/user/addToCart/<%= cloth._id %>">
+                                                            <a href="/addToCart/<%= cloth._id %>">
                                                                 <i class="fas fa-regular fa-cart-shopping px-2"></i></a>
                                                             <% }else{ %>                                                                    
-                                                                    <a href="http://localhost:3000/user/login">
+                                                                    <a href="/login">
                                                                         <i class="fas fa-regular fa-cart-shopping px-2"></i></a>
                                                                 <% } %>  
                                                     </h4>
@@ -50,7 +50,7 @@
                                                     </p>
                                                 </div>
                                                 <div class="card-read-more">
-                                                    <a href="http://localhost:3000/user/productDetail/<%= cloth._id %>"
+                                                    <a href="/productDetail/<%= cloth._id %>"
                                                         class="btn btn-link btn-block">
                                                         View Details
                                                     </a>

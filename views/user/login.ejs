@@ -16,7 +16,7 @@
                   <div class="card-body p-5">
                     <h2 id="createAccount" class="text text-center mb-5">Login to your Account</h2>
 
-                    <form action="/user/login" method="post">
+                    <form action="/login" method="post">
                       <% if ( message.length> 0) { %>
                         <h4 class="wrongID">
                           <%= message %>
@@ -41,7 +41,7 @@
                           </div>
                           <div class="d-flex justify-content-center mt-3">
                             <p class="textAccout">No account? </p>
-                            <a href="http://localhost:3000/user/signup"
+                            <a href="/signup"
                               class="textAccout ms-3"><u>Register
                                 here</u></a>
                           </div>

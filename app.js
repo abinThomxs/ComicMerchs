@@ -50,7 +50,7 @@ app.use((req, res, next) => {
 
 const userRoutes = require('./routes/userRoutes');
 
-app.use('/user', userRoutes);
+app.use('/', userRoutes);
 
 const adminRoutes = require('./routes/adminRoutes');
 
@@ -61,9 +61,9 @@ app.get('/', (req, res) => {
   // eslint-disable-next-line no-console
   console.log(session.userid);
   if (session.userid) {
-    res.redirect('/user/home');
+    res.redirect('/home');
   } else {
-    res.redirect('/user/login');
+    res.redirect('/login');
   }
 });
 

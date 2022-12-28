@@ -54,7 +54,7 @@
                                         <div class="col-sm-12 col-md-4 px-md-5">
                                             <div class="card">
                                                 <a class="img-card2"
-                                                    href="http://localhost:3000/user/productDetail/<%= product._id %>">
+                                                    href="/productDetail/<%= product._id %>">
                                                     <img src="<%= product.image[0].url %> " />
                                                 </a>
                                                 <div class="card-content">
@@ -64,13 +64,13 @@
                                                         </a>
                                                         <% if(customer===true) { %>
                                                             <a
-                                                                href="http://localhost:3000/user/addToWishlist/<%= product._id %>">
+                                                                href="/addToWishlist/<%= product._id %>">
                                                                 <i id="wish" class="fa-regular fa-heart px-2"></i></a>
                                                             <a
-                                                                href="http://localhost:3000/user/addToCart/<%= product._id %>">
+                                                                href="/addToCart/<%= product._id %>">
                                                                 <i class="fas fa-regular fa-cart-shopping px-2"></i></a>
                                                             <% }else{ %>
-                                                                <a href="http://localhost:3000/user/login">
+                                                                <a href="/login">
                                                                     <i
                                                                         class="fas fa-regular fa-cart-shopping px-2"></i><i
                                                                         class="fa-regular fa-heart px-2"></i></a>
@@ -81,7 +81,7 @@
                                                     </p>
                                                 </div>
                                                 <div class="card-read-more">
-                                                    <a href="http://localhost:3000/user/productDetail/<%= product._id %>"
+                                                    <a href="/productDetail/<%= product._id %>"
                                                         class="btn btn-link btn-block">
                                                         View Details
                                                     </a>
@@ -115,7 +115,7 @@
                                         <div class="col-sm-12 col-md-3">
                                             <div class="card">
                                                 <a class="img-card2"
-                                                    href="http://localhost:3000/user/productDetail/<%= discount._id %>">
+                                                    href="/productDetail/<%= discount._id %>">
                                                     <img src="<%= discount.image[0].url %> " />
                                                 </a>
                                                 <div class="card-content">
@@ -129,10 +129,10 @@
                                                                 <i id="wish" class="fa-regular fa-heart px-2"
                                                                     ></i></a>
                                                             <a
-                                                                href="http://localhost:3000/user/addToCart/<%= discount._id %>">
+                                                                href="/addToCart/<%= discount._id %>">
                                                                 <i class="fas fa-regular fa-cart-shopping px-2"></i></a>
                                                             <% }else{ %>
-                                                                <a href="http://localhost:3000/user/login">
+                                                                <a href="/login">
                                                                     <i
                                                                         class="fas fa-regular fa-cart-shopping px-2"></i><i
                                                                         class="fa-regular fa-heart px-2"></i></a>
@@ -143,7 +143,7 @@
                                                     </p>
                                                 </div>
                                                 <div class="card-read-more">
-                                                    <a href="http://localhost:3000/user/productDetail/<%= discount._id %>"
+                                                    <a href="/productDetail/<%= discount._id %>"
                                                         class="btn btn-link btn-block">
                                                         View Details
                                                     </a>
