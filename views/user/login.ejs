@@ -8,28 +8,42 @@
     <%- include('../partials/userNavbar.ejs') %>
       <%- include('../partials/offcanvas.ejs') %>
 
-        <section class="about px-5">
+        <section class="about py-5">
           <div class="containerlogin" id="about">
-            <div class="row  d-flex  justify-content-center ">
-              <div class="col-lg-6 d-flex  justify-content-center">
+            <div class="row  d-flex  justify-content-center ">           
+
+
+
+                <div class="col-lg-4 d-flex justify-content-center">
+                  <div class="signupBox mt-5">
+                    <div class="card-body p-5">
+                      <div class="mt-5 py-5">
+                        <img src="/images/hero-clipart-computer-3.jpg" style="width: 100%;" alt="">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+              <div class="col-lg-6 d-flex justify-content-center">
                 <div class="signupBox mt-5">
                   <div class="card-body p-5">
                     <h2 id="createAccount" class="text text-center mb-5">Login to your Account</h2>
 
                     <form action="/login" method="post">
                       <% if ( message.length> 0) { %>
-                        <h4 class="wrongID">
+                        <h4 class="wrongID text-danger">
                           <%= message %>
                         </h4>
                         <% } %>
-                          <div class=" form-outline mb-4">
-                            <input type="email" id="form3Example1cg" name="email"
+                          <div class=" form-outline">
+                            <input type="email" id="form3Example1cg" name="email" placeholder="email"
                               class="form-control form-control-lg" />
                             <label class="form-label" for="form3Example1cg">Email ID
                             </label>
                           </div>
-                          <div class=" form-outline mb-4">
-                            <input type="password" id="form3Example1cg" name="password"
+                          <div class=" form-outline ">
+                            <input type="password" id="form3Example1cg" name="password" placeholder="password"
                               class="form-control form-control-lg" />
                             <label class="form-label" for="form3Example1cg">Password
                             </label>
@@ -37,12 +51,12 @@
 
                           <div class="d-flex justify-content-center">
                             <button type="submit"
-                              class="btn btn-primary btn-block btn-lg gradient-custom-4 text-body">Login</button>
+                              class="btn btn-outline-primary btn-block btn-lg gradient-custom-4 text-body">Login</button>
                           </div>
                           <div class="d-flex justify-content-center mt-3">
-                            <p class="textAccout">No account? </p>
+                            <p class="textAccout text-dark">No account? </p>
                             <a href="/signup"
-                              class="textAccout ms-3"><u>Register
+                              class="textAccout ms-3 text-dark"><u>Register
                                 here</u></a>
                           </div>
                           

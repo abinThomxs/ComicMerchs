@@ -42,7 +42,7 @@
                             <td><a href="/edituser?email=<%= usersData.email %>" class="btn btn-secondary">Edit</a>
                             </td>
                             <% if (usersData.isBlock===false) { %>
-                                <td><a href="/admin/blockuser/<%= usersData._id %>" class=" btn btn-danger"
+                                <td><a href="/admin/blockuser/<%= usersData._id %>" class=" btn btn-danger" style="width: 85px;"
                                         onclick="return confirm('CLICK OK TO BLOCK')">Block</a></td>
                             <% } else { %>
                                 <td><a href="/admin/unblockuser/<%= usersData._id %>" class=" btn btn-danger"

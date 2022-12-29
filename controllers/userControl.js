@@ -20,7 +20,7 @@ const instance = require('../middlewares/razorpay');
 const Wishlists = require('../models/wishlist');
 const Banners = require('../models/banner');
 
-let message = '';
+// let message = '';
 
 const loginRender = (req, res) => {
   const session = req.session;
@@ -28,8 +28,7 @@ const loginRender = (req, res) => {
   if (session.userid) {
     res.redirect('/home');
   }
-  res.render('user/login', { message, customer });
-  message = '';
+  res.render('user/login', { message: '', customer });
 };
 
 const loginPost = async (req, res) => {
@@ -45,16 +44,13 @@ const loginPost = async (req, res) => {
               session.userid = result._id;
               res.redirect('/home');
             } else {
-              message = 'wrong password';
-              res.render('user/login', { message, customer });
+              res.render('user/login', { message: 'wrong password', customer });
             }
           } else {
-            message = 'You are blocked';
-            res.render('user/login', { message, customer });
+            res.render('user/login', { message: 'You are blocked', customer });
           }
         } else {
-          message = 'Register to continue';
-          res.render('user/login', { message, customer });
+          res.render('user/login', { message: 'Register to continue', customer });
         }
       });
   } catch (error) {
@@ -92,8 +88,8 @@ const logout = (req, res) => {
 
 const signupRender = (req, res) => {
   const customer = false;
+  const message = '';
   res.render('user/signup', { message, customer });
-  message = '';
 };
 
 const signupPost = async (req, res) => {
@@ -102,7 +98,6 @@ const signupPost = async (req, res) => {
     const User = await Users.findOne({ email: req.body.email });
     if (User) {
       res.render('user/signup', { message: 'User Already Exist' });
-      message = '';
     } else {
       const user = await Users.create({
         firstName: req.body.firstName,
@@ -133,9 +128,7 @@ const signupPost = async (req, res) => {
       });
     }
   } else {
-    message = 'Passwords do not match';
-    res.render('user/signup', { message });
-    message = '';
+    res.render('user/signup', { message: 'Passwords do not match' });
   }
 };
 
