@@ -70,8 +70,7 @@
 
                                                                             <button
                                                                                 class="btn btn-primary h-25 text-light px-2"
-                                                                                <% if (cartData.productQuantity <
-                                                                                (cartData.productDetail.stock-cartData.productDetail.soldCount))
+                                                                                <% if (cartData.productQuantity < (cartData.productDetail.stock-cartData.productDetail.soldCount))
                                                                                 { %>
                                                                                 onclick="changeQuantity('<%= cartData._id %>','<%= cartData.productDetail._id %>',1)<% } %>">+                                                                                            
                                                                             </button>
@@ -94,7 +93,7 @@
                                                                     </div>
                                                                     <div class="col-md-4 col-lg-4 col-xl-4 offset-lg-1">
                                                                         <% if
-                                                                            (cartData.productQuantity===(cartData.productDetail.stock-cartData.productDetail.soldCount))
+                                                                            (cartData.productQuantity>=(cartData.productDetail.stock-cartData.productDetail.soldCount))
                                                                             { %>
                                                                             <p class="text-danger">Sorry...Stock limit
                                                                                 reached
