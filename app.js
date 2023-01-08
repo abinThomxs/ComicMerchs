@@ -60,11 +60,7 @@ app.get('/', (req, res) => {
   const { session } = req;
   // eslint-disable-next-line no-console
   console.log(session.userid);
-  if (session.userid) {
-    res.redirect('/home');
-  } else {
-    res.redirect('/login');
-  }
+  res.redirect('/home');
 });
 
 app.use((req, res) => {
