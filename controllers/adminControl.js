@@ -104,7 +104,7 @@ const logout = (req, res) => {
   const { session } = req;
   session.destroy();
   console.log('logout');
-  res.redirect('/user/login');
+  res.redirect('/login');
 };
 
 const getAdminCategory = async (req, res) => {
@@ -390,12 +390,12 @@ const getSalesReport = async (req, res) => {
       },
       {
         $lookup:
-              {
-                from: 'users',
-                localField: 'user_id',
-                foreignField: '_id',
-                as: 'user',
-              },
+        {
+          from: 'users',
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'user',
+        },
       },
 
       {
@@ -423,12 +423,12 @@ const getSalesReport = async (req, res) => {
       },
       {
         $lookup:
-              {
-                from: 'users',
-                localField: 'user_id',
-                foreignField: '_id',
-                as: 'user',
-              },
+        {
+          from: 'users',
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'user',
+        },
       },
 
       {
@@ -455,12 +455,12 @@ const getSalesReport = async (req, res) => {
       },
       {
         $lookup:
-              {
-                from: 'users',
-                localField: 'user_id',
-                foreignField: '_id',
-                as: 'user',
-              },
+        {
+          from: 'users',
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'user',
+        },
       },
       {
         $project: {
